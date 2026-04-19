@@ -6,6 +6,9 @@ use Illuminate\Support\Facades\Schedule;
 // Schedule command to sync product views_count from browsing history every fifteen minutes
 Schedule::command('app:sync-product-views')->everyFifteenMinutes();
 
+// Schedule command to flush welcome page cache every fifteen minutes
+Schedule::command('app:flush-welcome-cache')->everyFifteenMinutes();
+
 // Schedule job to reindex old_price for all products with active store catalog every fifteen minutes
 Schedule::job(new ReindexOldPriceJob())->everyFifteenMinutes();
 
