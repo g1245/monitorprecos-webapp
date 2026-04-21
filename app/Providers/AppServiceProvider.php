@@ -100,8 +100,9 @@ class AppServiceProvider extends ServiceProvider
             return Cache::remember('department_menu', 300, function () {
                 // Get all parent departments with their children
                 return Department::whereNull('parent_id')
+                    ->where('show_in_menu', true)
                     ->with(['children' => function ($query) {
-                        $query->orderBy('name', 'asc');
+                        $query->where('show_in_menu', true)->orderBy('name', 'asc');
                     }])
                     ->orderBy('name', 'asc')
                     ->get();
