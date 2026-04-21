@@ -24,6 +24,12 @@ Route::middleware(['web', 'track.browsing'])->group(function () {
     Route::get('/categoria/{slug}', [PagesController::class, 'category'])->name('pages.category');
     
     Route::get('/{alias}/{departmentId}/dp', [DepartmentController::class, 'index'])->name('department.index');
+
+    Route::get('/destaques', [DepartmentController::class, 'index'])
+        ->defaults('alias', 'destaques')
+        ->defaults('departmentId', 154)
+        ->name('destaques.index');
+        
     Route::get('/{id}/{slug}/p', [ProductController::class, 'index'])->name('product.show');
     Route::get('/share/whatsapp/{id}', [ProductController::class, 'shareWhatsapp'])->name('product.share.whatsapp');
     Route::get('/product/{id}/redirect', [ProductController::class, 'redirectToStore'])->name('product.redirect');
