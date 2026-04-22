@@ -5,6 +5,7 @@ namespace App\Observers;
 use App\Models\Product;
 use App\Models\ProductChangeLog;
 use App\Services\ProductLifecycleService;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 
 class ProductObserver
@@ -79,6 +80,39 @@ class ProductObserver
      * @param Product $product The product that was created or updated.
      * @param string  $event   The event type ('created' or 'updated').
      */
+    /**
+     * Handle pivot attachment on the Product "departments" relationship.
+     * Clears the department menu cache when a product is attached to a department.
+     */
+    public function pivotAttached(Product $product, string $relationName, array $pivotIds, array $pivotIdsAttributes): void
+    {
+        if ($relationName === 'departments') {
+            Cache::forget('department_menu');
+        }
+    }
+
+    /**
+     * Handle pivot detachment on the Product "departments" relationship.
+     * Clears the department menu cache when a product is detached from a department.
+     */
+    public function pivotDetached(Product $product, string $relationName, array $pivotIds): void
+    {
+        if ($relationName === 'departments') {
+            Cache::forget('department_menu');
+        }
+    }
+
+    /**
+     * Handle pivot sync on the Product "departments" relationship.
+     * Clears the department menu cache when a product's department list is synced.
+     */
+    public function pivotSynced(Product $product, string $relationName, array $changes): void
+    {
+        if ($relationName === 'departments') {
+            Cache::forget('department_menu');
+        }
+    }
+
     private function writeAuditLog(Product $product, string $event): void
     {
         Log::channel('product-audit')->info("Product {$event}", [
