@@ -12,6 +12,8 @@
     <link rel="manifest" href="{{ Vite::asset('resources/images/favicon/site.webmanifest') }}" />
     <meta name="description" content="@yield('description', 'Compare preços de produtos de lojas virtuais de todo o Brasil e encontre as melhores ofertas.')">
     @stack('meta')
+    @include('partials.tracking.meta-pixel')
+    @include('partials.tracking.ga4')
     @vite('resources/css/app.css')
     @livewireStyles
 </head>
@@ -278,9 +280,6 @@
         </div>
     </footer>
 
-    @livewireScripts
-    @stack('scripts')
-
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             @if($isMobile)
@@ -356,8 +355,9 @@
     
     <!-- Toast Container -->
     <x-toast-container />
-    
+
     @livewireScripts
     @stack('scripts')
+    @stack('tracking_events')
 </body>
 </html>

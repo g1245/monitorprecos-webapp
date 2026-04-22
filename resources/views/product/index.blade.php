@@ -1079,4 +1079,24 @@
         })();
         @endauth
     </script>
+
+@push('tracking_events')
+@php
+    $trackingCategory = $product->departments->isNotEmpty()
+        ? $product->departments->first()->name
+        : null;
+@endphp
+<x-tracking-event
+    name="ViewContent"
+    :data="array_filter([
+        'content_ids'  => [(string) $product->id],
+        'content_name' => $product->name,
+        'content_type' => 'product',
+        'value'        => (float) $product->price,
+        'currency'     => 'BRL',
+        'brand'        => $product->brand ?: null,
+        'category'     => $trackingCategory,
+    ])"
+/>
+@endpush
 @endpush

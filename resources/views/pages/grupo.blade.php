@@ -242,3 +242,7 @@
 </div>
 
 @endsection
+
+@push('tracking_events')
+<x-tracking-event name="Lead" />
+@endpush
