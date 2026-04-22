@@ -98,3 +98,6 @@ Route::get('/termos-de-uso', [PagesController::class, 'show'])->defaults('slug',
 // WhatsApp group landing page
 Route::view('/grupo', 'pages.grupo')->name('pages.grupo');
 
+// WhatsApp group redirect (fires Lead + ViewContent pixels before redirecting)
+Route::view('/grupo/entrar', 'pages.grupo-redirect')->name('pages.grupo.redirect');
+

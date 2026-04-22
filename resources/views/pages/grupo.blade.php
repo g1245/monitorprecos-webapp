@@ -3,13 +3,13 @@
 @section('title', 'Grupos de Descontos no WhatsApp - Monitor de Preços')
 @section('description', 'Entre nos grupos do Monitor de Preços no WhatsApp e receba promoções selecionadas de grandes lojas do Brasil direto no seu celular.')
 
+@push('tracking_events')
+    <x-tracking-event name="ViewContent" :data="['content_name' => 'WhatsApp Grupo', 'content_category' => 'grupo']" />
+@endpush
+
 @section('content')
 
-{{--
-    TODO: Substitua o valor da variável abaixo pelo link real do grupo do WhatsApp.
-    Exemplo: https://chat.whatsapp.com/XXXXXXXXXXXXXXXXXXX
---}}
-@php $whatsappGroupLink = 'https://chat.whatsapp.com/Fs0jA2Xbvs0HwJwOQErZtm'; @endphp
+@php $whatsappGroupLink = route('pages.grupo.redirect'); @endphp
 
 {{-- ====================================================
      HERO
@@ -45,8 +45,6 @@
         <div class="mt-8">
             <a
                 href="{{ $whatsappGroupLink }}"
-                target="_blank"
-                rel="noopener noreferrer"
                 class="inline-flex items-center gap-3 bg-white text-green-600 font-bold text-lg px-8 py-4 rounded-2xl shadow-xl hover:shadow-2xl hover:bg-green-50 transition-all duration-200 active:scale-95"
                 aria-label="Entrar no grupo do WhatsApp do Monitor de Preços"
             >
@@ -164,8 +162,6 @@
         <div class="mt-12 text-center">
             <a
                 href="{{ $whatsappGroupLink }}"
-                target="_blank"
-                rel="noopener noreferrer"
                 class="inline-flex items-center gap-3 bg-green-500 text-white font-bold text-base px-7 py-3.5 rounded-xl shadow-md hover:bg-green-600 transition-colors duration-200 active:scale-95"
                 aria-label="Entrar no grupo do WhatsApp do Monitor de Preços"
             >
@@ -193,8 +189,6 @@
         </p>
         <a
             href="{{ $whatsappGroupLink }}"
-            target="_blank"
-            rel="noopener noreferrer"
             class="inline-flex items-center gap-3 bg-white text-green-600 font-bold text-lg px-8 py-4 rounded-2xl shadow-xl hover:shadow-2xl hover:bg-green-50 transition-all duration-200 active:scale-95"
             aria-label="Entrar no grupo do WhatsApp do Monitor de Preços"
         >
@@ -228,8 +222,6 @@
 >
     <a
         href="{{ $whatsappGroupLink }}"
-        target="_blank"
-        rel="noopener noreferrer"
         class="flex items-center justify-center gap-3 w-full bg-green-500 text-white font-bold text-base py-3.5 rounded-xl shadow-md hover:bg-green-600 transition-colors duration-200 active:scale-95"
         aria-label="Entrar no grupo do WhatsApp"
     >
@@ -242,7 +234,3 @@
 </div>
 
 @endsection
-
-@push('tracking_events')
-<x-tracking-event name="Lead" />
-@endpush
