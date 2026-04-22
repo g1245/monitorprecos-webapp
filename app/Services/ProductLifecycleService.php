@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Jobs\Product\AttachToPriceDropDepartmentJob;
 use App\Jobs\SendPriceAlertNotificationsJob;
 use App\Models\Product;
 
@@ -51,6 +52,10 @@ class ProductLifecycleService
                 'old_price'    => $previousPrice,
                 'old_price_at' => now(),
             ]);
+        }
+
+        if ($product->price < $previousPrice) {
+            AttachToPriceDropDepartmentJob::dispatch($product->id);
         }
 
         $this->updateRecordedPriceExtremes($product);

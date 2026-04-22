@@ -18,8 +18,10 @@ Schedule::command('app:create-today-price')->dailyAt('00:01');
 // Schedule command to sync product data by store every three hours
 Schedule::command('app:sync-product-by-store')->hourly();
 
-// Schedule command to sync top discounted products to Department every hour
-Schedule::command('app:sync-top-discounted-products-to-department')->hourly();
+// Price-category sync commands
+Schedule::command('app:sync-price-drop-today')->dailyAt('00:30');
+Schedule::command('app:sync-best-price-7-days')->dailyAt('00:45');
+Schedule::command('app:sync-best-price-15-days')->dailyAt('01:00');
 
 /** 
  * Schedule commands for backup and cleanup of old backups
