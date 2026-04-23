@@ -48,11 +48,22 @@ class ProductController extends Controller
      */
     public function redirectToStore(int $id)
     {
-        $product = Product::findOrFail($id);
+        $product = Product::with('store')->findOrFail($id);
 
         // TODO: Add tracking logic here (e.g., log click event, update analytics)
-        
-        return redirect($product->deep_link)->header('X-Robots-Tag', 'noindex, nofollow');
+
+        $utmParams = http_build_query([
+            'utm_source'   => 'monitorprecos',
+            'utm_medium'   => 'price_comparison',
+            'utm_campaign' => Str::slug($product->store?->name ?? 'loja'),
+            'utm_content'  => $product->id,
+            'utm_term'     => Str::slug($product->name),
+        ]);
+
+        $separator = str_contains($product->deep_link, '?') ? '&' : '?';
+        $url = $product->deep_link . $separator . $utmParams;
+
+        return redirect($url)->header('X-Robots-Tag', 'noindex, nofollow');
     }
 
     /**
