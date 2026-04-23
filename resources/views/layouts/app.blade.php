@@ -253,11 +253,11 @@
                 <div>
                     <h4 class="font-semibold mb-4">Atalhos</h4>
                     <ul class="space-y-2 text-sm text-gray-300">
-                        <li><a href="/search?q=tenis+corrida+nike" class="hover:text-blue-500 transition-colors">Tênis NIke</a></li>
-                        <li><a href="/search?q=tenis+corrida+adidas" class="hover:text-blue-500 transition-colors">Tênis Adidas</a></li>
-                        <li><a href="/search?q=tenis+corrida+asics" class="hover:text-blue-500 transition-colors">Tênis Asics</a></li>
-                        <li><a href="/search?q=tenis+corrida+olympikus" class="hover:text-blue-500 transition-colors">Tênis Olympikus</a></li>
-                        <li><a href="/search?q=roupa+corrida" class="hover:text-blue-500 transition-colors">Roupa para Corrida</a></li>
+                        <li><a href="/search?q=tenis+corrida&brand=nike" class="hover:text-blue-500 transition-colors">Tênis NIke</a></li>
+                        <li><a href="/search?q=tenis+corrida&brand=adidas" class="hover:text-blue-500 transition-colors">Tênis Adidas</a></li>
+                        <li><a href="/search?q=tenis&brand=asics" class="hover:text-blue-500 transition-colors">Tênis Asics</a></li>
+                        <li><a href="/search?q=tenis+corrida&brand=olympikus" class="hover:text-blue-500 transition-colors">Tênis Olympikus</a></li>
+                        <li><a href="/search?q=dri+fit" class="hover:text-blue-500 transition-colors">Dri-FIT</a></li>
                     </ul>
                 </div>
 
