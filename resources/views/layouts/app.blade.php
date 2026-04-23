@@ -251,13 +251,13 @@
 
                 <!-- Categories -->
                 <div>
-                    <h4 class="font-semibold mb-4">Categorias</h4>
+                    <h4 class="font-semibold mb-4">Atalhos</h4>
                     <ul class="space-y-2 text-sm text-gray-300">
-                        <li><a href="/eletronicos/dp" class="hover:text-blue-500 transition-colors">Eletrônicos</a></li>
-                        <li><a href="/celulares/dp" class="hover:text-blue-500 transition-colors">Celulares</a></li>
-                        <li><a href="/informatica/dp" class="hover:text-blue-500 transition-colors">Informática</a></li>
-                        <li><a href="/eletrodomesticos/dp" class="hover:text-blue-500 transition-colors">Eletrodomésticos</a></li>
-                        <li><a href="/casa-e-decoracao/dp" class="hover:text-blue-500 transition-colors">Casa e Decoração</a></li>
+                        <li><a href="/search?q=tenis+corrida+nike" class="hover:text-blue-500 transition-colors">Tênis NIke</a></li>
+                        <li><a href="/search?q=tenis+corrida+adidas" class="hover:text-blue-500 transition-colors">Tênis Adidas</a></li>
+                        <li><a href="/search?q=tenis+corrida+asics" class="hover:text-blue-500 transition-colors">Tênis Asics</a></li>
+                        <li><a href="/search?q=tenis+corrida+olympikus" class="hover:text-blue-500 transition-colors">Tênis Olympikus</a></li>
+                        <li><a href="/search?q=roupa+corrida" class="hover:text-blue-500 transition-colors">Roupa para Corrida</a></li>
                     </ul>
                 </div>
 
