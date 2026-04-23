@@ -25,7 +25,7 @@
             this.advance();
         },
         advance() {
-            const delays = [900, 1600, 1200];
+            const delays = [1200, 1600, 1600];
             const run = (index) => {
                 if (index >= this.steps.length) {
                     window.location.href = this.destination;
