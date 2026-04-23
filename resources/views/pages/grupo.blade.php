@@ -116,6 +116,122 @@
 </section>
 
 {{-- ====================================================
+     OFERTAS REAIS — SEÇÃO DE PRODUTOS MOCK
+     ==================================================== --}}
+<section class="py-16 bg-white border-t border-gray-100">
+    <div class="container mx-auto px-4">
+
+        {{-- Headline --}}
+        <div class="max-w-2xl mx-auto text-center mb-12">
+            <span class="inline-block bg-green-100 text-green-700 text-xs font-semibold uppercase tracking-widest px-3 py-1 rounded-full mb-4">
+                Sem enganação
+            </span>
+            <h2 class="text-2xl md:text-3xl font-bold text-gray-900 mb-4">
+                Só avisamos quando é oferta de verdade
+            </h2>
+            <p class="text-gray-600 leading-relaxed">
+                Nosso sistema rastreia o <strong>preço real de venda</strong> dia a dia — e só notifica quando o preço <strong>de fato caiu</strong>. Veja os tipos de oferta que identificamos:
+            </p>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
+            <div class="bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-md transition-shadow flex flex-col">
+                <div class="px-4 pt-4">
+                    <span class="inline-flex items-center gap-1 bg-green-100 text-green-700 text-xs font-semibold px-2.5 py-1 rounded-full">
+                        <svg class="w-3 h-3 shrink-0" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd" d="M12.577 4.878a.75.75 0 0 1 .919-.53l4.78 1.281a.75.75 0 0 1 .531.919l-1.281 4.78a.75.75 0 0 1-1.449-.387l.81-3.022a19.407 19.407 0 0 0-5.594 5.203.75.75 0 0 1-1.139.093L7 10.06l-4.72 4.72a.75.75 0 0 1-1.06-1.061l5.25-5.25a.75.75 0 0 1 1.06 0l3.074 3.073a20.923 20.923 0 0 1 5.545-4.931l-3.042-.815a.75.75 0 0 1-.53-.918z" clip-rule="evenodd"/>
+                        </svg>
+                        Menor preço histórico
+                    </span>
+                </div>
+                <div class="block p-4">
+                    <div class="aspect-square overflow-hidden rounded-lg bg-gray-50 flex items-center justify-center">
+                        <img src="{{ Vite::asset('resources/images/grupos/adidas-duramo-rc.webp') }}" alt="Tênis Adidas Duramo Rc - Feminino" class="w-full h-full object-contain">
+                    </div>
+                </div>
+                <div class="px-2 py-4 flex-1 flex flex-col">
+                    <p class="text-sm font-medium text-gray-800 line-clamp-2 mb-2">
+                        Tênis Adidas Duramo Rc - Feminino
+                    </p>
+                    <div class="text-xs text-gray-400 line-through">de R$ 499,99</div>
+                    <div class="text-xl font-bold text-primary">R$ 189,99</div>
+                    <div class="mt-2 flex items-center gap-2">
+                        <span class="bg-green-100 text-green-800 text-xs font-semibold px-2 py-0.5 rounded">62% OFF</span>
+                        <span class="text-xs text-gray-400">vs. histórico real</span>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-md transition-shadow flex flex-col">
+                <div class="px-4 pt-4">
+                    <span class="inline-flex items-center gap-1 bg-blue-100 text-blue-700 text-xs font-semibold px-2.5 py-1 rounded-full">
+                        <svg class="w-3 h-3 shrink-0" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd" d="M10 3a.75.75 0 0 1 .75.75v10.638l3.96-4.158a.75.75 0 1 1 1.08 1.04l-5.25 5.5a.75.75 0 0 1-1.08 0l-5.25-5.5a.75.75 0 1 1 1.08-1.04l3.96 4.158V3.75A.75.75 0 0 1 10 3z" clip-rule="evenodd"/>
+                        </svg>
+                        Queda real de preço
+                    </span>
+                </div>
+                <div class="block p-4">
+                    <div class="aspect-square overflow-hidden rounded-lg bg-gray-50 flex items-center justify-center">
+                        <img src="{{ Vite::asset('resources/images/grupos/asics-gel-outsider.webp') }}" alt="Tênis ASICS Gel-Outsider Masculino" class="w-full h-full object-contain">
+                    </div>
+                </div>
+                <div class="px-2 py-4 flex-1 flex flex-col">
+                    <p class="text-sm font-medium text-gray-800 line-clamp-2 mb-2">
+                        Tênis ASICS Gel-Outsider Masculino
+                    </p>
+                    <div class="text-xs text-gray-400 line-through">de R$ 599,99</div>
+                    <div class="text-xl font-bold text-primary">R$ 313,49</div>
+                    <div class="mt-2 flex items-center gap-2">
+                        <span class="bg-blue-100 text-blue-800 text-xs font-semibold px-2 py-0.5 rounded">48% OFF</span>
+                        <span class="text-xs text-gray-400">caiu nos últimos 7 dias</span>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-md transition-shadow flex flex-col">
+                <div class="px-4 pt-4">
+                    <span class="inline-flex items-center gap-1 bg-amber-100 text-amber-700 text-xs font-semibold px-2.5 py-1 rounded-full">
+                        <svg class="w-3 h-3 shrink-0" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M11.983 1.907a.75.75 0 0 0-1.292-.657l-8.5 9.5A.75.75 0 0 0 2.75 12h6.572l-1.305 6.093a.75.75 0 0 0 1.292.657l8.5-9.5A.75.75 0 0 0 17.25 8h-6.572l1.305-6.093z"/>
+                        </svg>
+                        Oferta relâmpago
+                    </span>
+                </div>
+                <div class="block p-4">
+                    <div class="aspect-square overflow-hidden rounded-lg bg-gray-50 flex items-center justify-center">
+                        <img src="{{ Vite::asset('resources/images/grupos/nike-quest-5.webp') }}" alt="Tênis Nike Quest 5 - Masculino" class="w-full h-full object-contain">
+                    </div>
+                </div>
+                <div class="px-2 py-4 flex-1 flex flex-col">
+                    <p class="text-sm font-medium text-gray-800 line-clamp-2 mb-2">
+                        Tênis Nike Quest 5 - Masculino
+                    </p>
+                    <div class="text-xs text-gray-400 line-through">de R$ 499,99</div>
+                    <div class="text-xl font-bold text-primary">R$ 275,49</div>
+                    <div class="mt-2 flex items-center gap-2">
+                        <span class="bg-amber-100 text-amber-800 text-xs font-semibold px-2 py-0.5 rounded">45% OFF</span>
+                        <span class="text-xs text-gray-400">tempo limitado</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-12 text-center">
+            <a
+                href="{{ $whatsappGroupLink }}"
+                class="inline-flex items-center gap-3 bg-green-500 text-white font-bold text-base px-7 py-3.5 rounded-xl shadow-md hover:bg-green-600 transition-colors duration-200 active:scale-95"
+                aria-label="Entrar no grupo do WhatsApp do Monitor de Preços"
+            >
+                <svg class="w-5 h-5 shrink-0" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
+                    <path d="M12 0C5.373 0 0 5.373 0 12c0 2.125.558 4.118 1.532 5.845L.057 23.882a.5.5 0 0 0 .612.612l6.037-1.475A11.942 11.942 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.808 9.808 0 0 1-5.032-1.385l-.36-.214-3.733.912.93-3.733-.233-.373A9.808 9.808 0 0 1 2.182 12C2.182 6.57 6.57 2.182 12 2.182S21.818 6.57 21.818 12 17.43 21.818 12 21.818z"/>
+                </svg>
+                Quero entrar no grupo
+            </a>
+        </div>
+    </div>
+</section>
+
+{{-- ====================================================
      COMO FUNCIONA
      ==================================================== --}}
 <section class="py-16 bg-gray-50">
