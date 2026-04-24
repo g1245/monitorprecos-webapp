@@ -14,6 +14,13 @@ use App\Http\Controllers\UserWishProductController;
 use App\Http\Controllers\NewsletterLeadController;
 use App\Http\Controllers\PagesController;
 use App\Http\Controllers\ContactMessageController;
+use App\Http\Controllers\MarkdownFeedController;
+
+// AI-readable Markdown feed (token-protected, no browsing history tracking)
+Route::get('/destaques.md', [MarkdownFeedController::class, 'highlights'])->name('destaques.md');
+
+// Short redirect alias for sharing (e.g. monitordeprecos.com.br/84485/r)
+Route::get('/{id}/r', [ProductController::class, 'redirectToStore'])->name('product.redirect.short');
 
 // Public routes with browsing history tracking
 Route::middleware(['web', 'track.browsing'])->group(function () {

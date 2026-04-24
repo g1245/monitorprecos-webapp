@@ -51,5 +51,9 @@ return [
         'url' => env('AWIN_API_URL', 'https://aw-data.monitordeprecos.com.br'),
         'token' => env('AWIN_API_TOKEN', ''),
     ],
-    
+
+    'markdown_feed' => [
+        'token' => env('MARKDOWN_FEED_TOKEN'),
+    ],
+
 ];
