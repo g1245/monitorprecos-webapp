@@ -17,20 +17,17 @@
             font-family: ui-sans-serif, system-ui, -apple-system, sans-serif;
         }
 
-        /* Outer wrapper — slate background for depth */
+        /* Outer wrapper */
         .share-wrapper {
             width: 800px;
             height: 800px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+            background: #ffffff;
         }
 
-        /* Main card — strict 760×760 */
+        /* Main card — 800×800, no margins */
         .card {
-            width: 760px;
-            height: 760px;
+            width: 800px;
+            height: 800px;
             border-radius: 0;
             background: #ffffff;
             box-shadow: none;
