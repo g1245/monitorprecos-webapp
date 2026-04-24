@@ -31,6 +31,12 @@ Route::middleware(['web', 'track.browsing'])->group(function () {
     Route::get('/categoria/{slug}', [PagesController::class, 'category'])->name('pages.category');
     
     Route::get('/{alias}/{departmentId}/dp', [DepartmentController::class, 'index'])->name('department.index');
+
+    Route::get('/destaques', [DepartmentController::class, 'index'])
+        ->defaults('alias', 'destaques')
+        ->defaults('departmentId', 154)
+        ->name('destaques.index');
+        
     Route::get('/{id}/{slug}/p', [ProductController::class, 'index'])->name('product.show');
     Route::get('/share/whatsapp/{id}', [ProductController::class, 'shareWhatsapp'])->name('product.share.whatsapp');
     Route::get('/product/{id}/redirect', [ProductController::class, 'redirectToStore'])->name('product.redirect');
@@ -44,22 +50,26 @@ Route::middleware(['web', 'track.browsing'])->group(function () {
 Route::get('/loja/{id}/logo', [StoreController::class, 'logo'])->name('store.logo');
 
 // Newsletter subscription route
-Route::post('/newsletter/subscribe', [NewsletterLeadController::class, 'store'])->name('newsletter.subscribe');
+Route::post('/newsletter/subscribe', [NewsletterLeadController::class, 'store'])
+    ->middleware('throttle:newsletter')
+    ->name('newsletter.subscribe');
 
 // Contact message route
-Route::post('/contact-message', [ContactMessageController::class, 'store'])->name('contact-message.store');
+Route::post('/contact-message', [ContactMessageController::class, 'store'])
+    ->middleware('throttle:contact-message')
+    ->name('contact-message.store');
 
 // Authentication routes
 Route::prefix('auth')->name('auth.')->group(function () {
     Route::middleware('guest')->group(function () {
         Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
-        Route::post('/login', [AuthController::class, 'login']);
+        Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:login');
         
         Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
-        Route::post('/register', [AuthController::class, 'register']);
+        Route::post('/register', [AuthController::class, 'register'])->middleware('throttle:register');
         
         Route::get('/recovery', [PasswordRecoveryController::class, 'showForgotPassword'])->name('recovery');
-        Route::post('/recovery', [PasswordRecoveryController::class, 'sendResetLink']);
+        Route::post('/recovery', [PasswordRecoveryController::class, 'sendResetLink'])->middleware('throttle:password-recovery');
         
         Route::get('/reset-password/{token}', [PasswordRecoveryController::class, 'showResetPassword'])->name('password.reset');
         Route::post('/reset-password', [PasswordRecoveryController::class, 'resetPassword'])->name('password.update');
@@ -94,4 +104,7 @@ Route::get('/termos-de-uso', [PagesController::class, 'show'])->defaults('slug',
 
 // WhatsApp group landing page
 Route::view('/grupo', 'pages.grupo')->name('pages.grupo');
+
+// WhatsApp group redirect (fires Lead + ViewContent pixels before redirecting)
+Route::view('/grupo/entrar', 'pages.grupo-redirect')->name('pages.grupo.redirect');
 

@@ -76,7 +76,7 @@
         $schemaProduct['category'] = $product->departments->first()->name;
     }
 @endphp
-<script type="application/ld+json">{!! json_encode($schemaProduct, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) !!}</script>
+<script type="application/ld+json">{!! json_encode($schemaProduct, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP) !!}</script>
 @endpush
 
 @section('content')
@@ -1079,4 +1079,24 @@
         })();
         @endauth
     </script>
+
+@push('tracking_events')
+@php
+    $trackingCategory = $product->departments->isNotEmpty()
+        ? $product->departments->first()->name
+        : null;
+@endphp
+<x-tracking-event
+    name="ViewContent"
+    :data="array_filter([
+        'content_ids'  => [(string) $product->id],
+        'content_name' => $product->name,
+        'content_type' => 'product',
+        'value'        => (float) $product->price,
+        'currency'     => 'BRL',
+        'brand'        => $product->brand ?: null,
+        'category'     => $trackingCategory,
+    ])"
+/>
+@endpush
 @endpush

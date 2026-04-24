@@ -5,7 +5,9 @@ namespace App\Filament\Resources\Departments\Tables;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
+use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
 
 class DepartmentsTable
@@ -18,6 +20,10 @@ class DepartmentsTable
                     ->searchable(),
                 TextColumn::make('parent.name')
                     ->searchable(),
+                IconColumn::make('show_in_menu')
+                    ->label('No menu')
+                    ->boolean(),
+
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -28,7 +34,8 @@ class DepartmentsTable
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                //
+                TernaryFilter::make('show_in_menu')
+                    ->label('Exibir no menu'),
             ])
             ->recordActions([
                 EditAction::make(),

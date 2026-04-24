@@ -21,6 +21,7 @@ class Department extends Model
     protected $fillable = [
         'name',
         'parent_id',
+        'show_in_menu',
     ];
 
     /**
@@ -30,6 +31,7 @@ class Department extends Model
      */
     protected $casts = [
         'parent_id' => 'integer',
+        'show_in_menu' => 'boolean',
     ];
 
     /**

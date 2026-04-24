@@ -5,15 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'Monitor de Preços - Encontre os melhores preços!')</title>
-
     <link rel="icon" type="image/png" href="{{ Vite::asset('resources/images/favicon/favicon-96x96.png') }}" sizes="96x96" />
     <link rel="icon" type="image/svg+xml" href="{{ Vite::asset('resources/images/favicon/favicon.svg') }}" />
     <link rel="shortcut icon" href="{{ Vite::asset('resources/images/favicon/favicon.ico') }}" />
     <link rel="apple-touch-icon" sizes="180x180" href="{{ Vite::asset('resources/images/favicon/apple-touch-icon.png') }}" />
     <link rel="manifest" href="{{ Vite::asset('resources/images/favicon/site.webmanifest') }}" />
-
     <meta name="description" content="@yield('description', 'Compare preços de produtos de lojas virtuais de todo o Brasil e encontre as melhores ofertas.')">
     @stack('meta')
+    @include('partials.tracking.meta-pixel')
+    @include('partials.tracking.ga4')
     @vite('resources/css/app.css')
     @livewireStyles
 </head>
@@ -140,23 +140,16 @@
         <div class="container mx-auto px-4">
             @if($isMobile)
                 <!-- Mobile Layout -->
-                <div class="py-3 flex items-center space-x-4">
-                    <button id="departmentsBtn" class="flex-1 flex items-center justify-center space-x-2 px-4 py-3 bg-blue-600 rounded hover:bg-blue-700 transition-colors">
+                <div class="py-3">
+                    <button id="departmentsBtn" class="w-full flex items-center justify-center space-x-2 px-4 py-3 bg-blue-600 rounded hover:bg-blue-700 transition-colors">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
                         </svg>
-                        <span class="font-medium">Navegue por departamentos</span>
+                        <span class="font-medium">Navegue por aqui</span>
                         <svg id="chevronIcon" class="w-4 h-4 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                         </svg>
                     </button>
-
-                    <a href="{{ route('stores.index') }}" class="flex items-center space-x-1 text-white hover:text-blue-400 transition-colors whitespace-nowrap">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path>
-                        </svg>
-                        <span>Lojas</span>
-                    </a>
                 </div>
             @else
                 <!-- Desktop Layout -->
@@ -182,6 +175,24 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path>
                                 </svg>
                                 <span>Lojas</span>
+                            </a>
+                            <a href="{{ route('destaques.index') }}" class="flex items-center space-x-1 hover:text-yellow-300 transition-colors">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"></path>
+                                </svg>
+                                <span>Destaques</span>
+                            </a>
+                            <a href="{{ route('pages.how') }}" class="flex items-center space-x-1 hover:text-blue-400 transition-colors">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                                <span>Como Funciona</span>
+                            </a>
+                            <a href="{{ route('pages.grupo') }}" class="flex items-center space-x-1 hover:text-green-400 transition-colors">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z"></path>
+                                </svg>
+                                <span>Grupo WhatsApp</span>
                             </a>
                         </div>
                     </div>
@@ -240,13 +251,13 @@
 
                 <!-- Categories -->
                 <div>
-                    <h4 class="font-semibold mb-4">Categorias</h4>
+                    <h4 class="font-semibold mb-4">Atalhos</h4>
                     <ul class="space-y-2 text-sm text-gray-300">
-                        <li><a href="/eletronicos/dp" class="hover:text-blue-500 transition-colors">Eletrônicos</a></li>
-                        <li><a href="/celulares/dp" class="hover:text-blue-500 transition-colors">Celulares</a></li>
-                        <li><a href="/informatica/dp" class="hover:text-blue-500 transition-colors">Informática</a></li>
-                        <li><a href="/eletrodomesticos/dp" class="hover:text-blue-500 transition-colors">Eletrodomésticos</a></li>
-                        <li><a href="/casa-e-decoracao/dp" class="hover:text-blue-500 transition-colors">Casa e Decoração</a></li>
+                        <li><a href="/search?q=tenis+corrida&brand=nike" class="hover:text-blue-500 transition-colors">Tênis NIke</a></li>
+                        <li><a href="/search?q=tenis+corrida&brand=adidas" class="hover:text-blue-500 transition-colors">Tênis Adidas</a></li>
+                        <li><a href="/search?q=tenis&brand=asics" class="hover:text-blue-500 transition-colors">Tênis Asics</a></li>
+                        <li><a href="/search?q=tenis+corrida&brand=olympikus" class="hover:text-blue-500 transition-colors">Tênis Olympikus</a></li>
+                        <li><a href="/search?q=dri+fit" class="hover:text-blue-500 transition-colors">Dri-FIT</a></li>
                     </ul>
                 </div>
 
@@ -263,13 +274,11 @@
 
             <!-- Bottom Footer -->
             <div class="border-t border-blue-800 mt-8 pt-8 text-center text-sm text-gray-400">
-                <p>&copy; {{ date('Y') }} Monitor de Preços. Todos os direitos reservados. Group 1245 LTDA - 52.171.773/0001-34</p>
+                <p class="mb-2">&copy; {{ date('Y') }} Monitor de Preços. Todos os direitos reservados. Group 1245 LTDA - 52.171.773/0001-34</p>
+                <p>AVISO LEGAL: Somos um site de publicidade gratuito. O uso está condicionado à aceitação de nossa Política de Privacidade e Termos de Uso. Preços e disponibilidade podem variar a qualquer momento sem aviso prévio; consulte sempre a loja antes de comprar. Não utilizamos drop cookie ou cookie stuffing. Nossa receita é gerada por comissões em acordos comerciais com algumas varejistas parceiras.</p>
             </div>
         </div>
     </footer>
-
-    @livewireScripts
-    @stack('scripts')
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -346,8 +355,9 @@
     
     <!-- Toast Container -->
     <x-toast-container />
-    
+
     @livewireScripts
     @stack('scripts')
+    @stack('tracking_events')
 </body>
 </html>

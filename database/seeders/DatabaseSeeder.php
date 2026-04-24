@@ -15,7 +15,7 @@ class DatabaseSeeder extends Seeder
     {
         User::factory()->create([
             'name' => 'Test User',
-            'email' => 'admin@admin.com',
+            'email' => 'admin@monitordeprecos.com.br',
         ]);
 
         $this->call(StoreSeeder::class);

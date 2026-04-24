@@ -4,11 +4,15 @@ namespace App\Http\Controllers;
 
 use App\Models\Product;
 use App\Models\UserWishProduct;
+use App\Services\AdminNotificationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class UserWishProductController extends Controller
 {
+    public function __construct(
+        private readonly AdminNotificationService $adminNotificationService
+    ) {}
     /**
      * Add a product to user's wishlist (with optional price alert).
      */
@@ -35,6 +39,10 @@ class UserWishProductController extends Controller
         );
 
         $isNew = $wish->wasRecentlyCreated;
+
+        if ($isNew && $wish->hasPriceAlert()) {
+            $this->adminNotificationService->notifyNewPriceAlert($wish);
+        }
 
         $message = match(true) {
             $isNew && $wish->hasPriceAlert() => 'Produto salvo com alerta de preço!',

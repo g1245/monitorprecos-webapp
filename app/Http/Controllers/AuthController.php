@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Jobs\SendWelcomeEmailJob;
 use App\Models\User;
+use App\Services\AdminNotificationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -11,6 +12,9 @@ use Illuminate\Validation\Rules\Password;
 
 class AuthController extends Controller
 {
+    public function __construct(
+        private readonly AdminNotificationService $adminNotificationService
+    ) {}
     /**
      * Show the login form.
      */
@@ -69,6 +73,7 @@ class AuthController extends Controller
         Auth::login($user);
 
         SendWelcomeEmailJob::dispatch($user);
+        $this->adminNotificationService->notifyNewUser($user);
 
         return redirect()->route('account.dashboard')
             ->with('success', 'Conta criada com sucesso! Bem-vindo(a)!');

@@ -15,11 +15,13 @@ class ProductChangeLog extends Model
         'product_id',
         'before',
         'after',
+        'backtrace',
     ];
 
     protected $casts = [
         'before'     => 'array',
         'after'      => 'array',
+        'backtrace'  => 'array',
         'created_at' => 'datetime',
     ];
 
