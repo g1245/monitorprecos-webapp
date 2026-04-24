@@ -32,6 +32,14 @@ class MarkdownFeedController extends Controller
             ->fromPublicStore()
             ->parentProducts()
             ->whereColumn('price', '<', 'highest_recorded_price')
+            ->when($request->filled('search'), function ($query) use ($request) {
+                $term = '%' . $request->string('search')->trim()->value() . '%';
+                $query->where(function ($q) use ($term) {
+                    $q->where('name', 'like', $term)
+                      ->orWhere('description', 'like', $term)
+                      ->orWhere('brand', 'like', $term);
+                });
+            })
             ->orderByRaw('discount_percentage desc')
             ->select(['id', 'name', 'price', 'old_price', 'highest_recorded_price', 'description', 'image_url'])
             ->get();
