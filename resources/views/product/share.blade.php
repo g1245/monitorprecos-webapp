@@ -27,13 +27,13 @@
             background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
         }
 
-        /* Main card — strict 760×760 so shadow is visible */
+        /* Main card — strict 760×760 */
         .card {
             width: 760px;
             height: 760px;
-            border-radius: 20px;
+            border-radius: 0;
             background: #ffffff;
-            box-shadow: 0 8px 40px rgba(0,0,0,0.12);
+            box-shadow: none;
             display: flex;
             flex-direction: column;
             overflow: hidden;
