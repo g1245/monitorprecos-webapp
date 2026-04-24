@@ -22,6 +22,11 @@ Route::get('/destaques.md', [MarkdownFeedController::class, 'highlights'])->name
 // Short redirect alias for sharing (e.g. monitordeprecos.com.br/84485/r)
 Route::get('/{id}/r', [ProductController::class, 'redirectToStore'])->name('product.redirect.short');
 
+// Similar products JSON endpoint — no browsing history tracking
+Route::get('/produto/{id}/similares', [ProductController::class, 'similar'])
+    ->middleware('throttle:60,1')
+    ->name('product.similar');
+
 // Share card — no-index, no tracking, intended for Playwright/Puppeteer screenshot
 Route::get('/share/{id}', [ProductController::class, 'share'])->name('product.share');
 
