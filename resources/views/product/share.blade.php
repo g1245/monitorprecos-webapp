@@ -194,9 +194,9 @@
             flex-shrink: 0;
         }
 
-        /* ── Chart (200px) ─────────────────────────────────── */
+        /* ── Chart (fills remaining space) ────────────────── */
         .chart-area {
-            flex: 0 0 200px;
+            flex: 1 1 0;
             display: flex;
             flex-direction: row;
             border-bottom: 1px solid #f1f5f9;
@@ -271,7 +271,7 @@
 
         /* Chart placeholder (no history) */
         .chart-no-history {
-            flex: 0 0 200px;
+            flex: 1 1 0;
             display: flex;
             align-items: center;
             justify-content: center;
