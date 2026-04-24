@@ -22,6 +22,9 @@ Route::get('/destaques.md', [MarkdownFeedController::class, 'highlights'])->name
 // Short redirect alias for sharing (e.g. monitordeprecos.com.br/84485/r)
 Route::get('/{id}/r', [ProductController::class, 'redirectToStore'])->name('product.redirect.short');
 
+// Share card — no-index, no tracking, intended for Playwright/Puppeteer screenshot
+Route::get('/share/{id}', [ProductController::class, 'share'])->name('product.share');
+
 // Public routes with browsing history tracking
 Route::middleware(['web', 'track.browsing'])->group(function () {
     Route::get('/', [WelcomeController::class, 'index'])->name('welcome');

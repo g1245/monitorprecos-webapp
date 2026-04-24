@@ -30,6 +30,25 @@ class ProductController extends Controller
     }
 
     /**
+     * Render a 1:1 share card for screenshot via Playwright/Puppeteer.
+     * Not indexed, no tracking, no interactions.
+     */
+    public function share(int $id)
+    {
+        $product = Product::query()
+            ->with(['departments', 'attributes'])
+            ->where('products.id', $id)
+            ->fromPublicStore()
+            ->firstOrFail();
+
+        $priceHistory = $this->getPriceHistory($product);
+
+        return response()
+            ->view('product.share', compact('product', 'priceHistory'))
+            ->header('X-Robots-Tag', 'noindex, nofollow');
+    }
+
+    /**
      * Share product on WhatsApp.
      */
     public function shareWhatsapp(int $id)
