@@ -144,7 +144,11 @@
                             <a rel="nofollow" target="_blank-{{ $product->id }}" href="{{ route('product.redirect', $product->id) }}" class="block w-full text-center action-button-primary text-white font-semibold py-3 px-6 rounded-lg transition-colors cursor-pointer" title="Comprar {{ $product->name }} na loja {{ $product->store->name }}">
                                 Comprar
                             </a>
-                            
+
+                            <p class="flex items-start gap-1.5 text-xs text-gray-400 leading-relaxed text-center">
+                                A oferta pode ser alterada ou encerrada a qualquer momento. Preço e disponibilidade sujeitos à confirmação na loja parceira.
+                            </p>
+
                             <div class="grid grid-cols-2 gap-3">
                                 <button class="action-button-secondary flex items-center justify-center space-x-2 text-gray-700 py-2 px-4 rounded-lg transition-colors cursor-pointer" data-action="copy-link">
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
