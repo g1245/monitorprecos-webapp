@@ -172,6 +172,44 @@ class ProductController extends Controller
     }
 
     /**
+     * Return products from the same merchant category, ordered by highest discount via Meilisearch.
+     */
+    public function sameCategory(int $id): \Illuminate\Http\JsonResponse
+    {
+        $product = Product::query()
+            ->fromPublicStore()
+            ->findOrFail($id);
+
+        if (empty($product->merchant_category)) {
+            return response()->json(['data' => []]);
+        }
+
+        $results = Product::search('')
+            ->where('merchant_category', $product->merchant_category)
+            ->where('is_store_visible', true)
+            ->where('is_parent', 0)
+            ->orderBy('discount_percentage', 'desc')
+            ->take(21)
+            ->get()
+            ->reject(fn ($p) => $p->id === $product->id)
+            ->take(20);
+
+        $data = $results->map(fn ($p) => [
+            'id'                  => $p->id,
+            'name'                => $p->name,
+            'price'               => $p->price,
+            'old_price'           => $p->old_price && $p->old_price > $p->price ? $p->old_price : null,
+            'discount_percentage' => $p->discount_percentage,
+            'image_url'           => $p->image_url,
+            'brand'               => $p->brand,
+            'store_name'          => $p->store?->name,
+            'url'                 => route('product.show', ['id' => $p->id, 'slug' => $p->permalink]),
+        ])->values();
+
+        return response()->json(['data' => $data]);
+    }
+
+    /**
      * Generate mock price history for demonstration.
      */
     private function getMockPriceHistory(Product $product): array

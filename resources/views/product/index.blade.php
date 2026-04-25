@@ -392,6 +392,9 @@
         {{-- Similar Products Carousel --}}
         @include('product.partials.similar-products')
 
+        {{-- Same Category Products Carousel --}}
+        @include('product.partials.same-category-products')
+
         <!-- Price Alert Modal -->
         @auth
         <div id="priceAlertModal" class="hidden fixed inset-0 bg-gray-900 bg-opacity-75 overflow-y-auto h-full w-full z-50">

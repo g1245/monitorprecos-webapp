@@ -27,6 +27,11 @@ Route::get('/produto/{id}/similares', [ProductController::class, 'similar'])
     ->middleware('throttle:60,1')
     ->name('product.similar');
 
+// Same category products JSON endpoint — ordered by highest discount
+Route::get('/produto/{id}/mesma-categoria', [ProductController::class, 'sameCategory'])
+    ->middleware('throttle:60,1')
+    ->name('product.same-category');
+
 // Share card — no-index, no tracking, intended for Playwright/Puppeteer screenshot
 Route::get('/share/{id}', [ProductController::class, 'share'])->name('product.share');
 
