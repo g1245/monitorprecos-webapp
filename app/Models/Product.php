@@ -38,6 +38,10 @@ class Product extends Model
         'views_count',
         'deep_link',
         'external_link',
+        'merchant_category',
+        'merchant_category_1',
+        'merchant_category_2',
+        'merchant_category_3',
     ];
 
     /**
@@ -302,17 +306,6 @@ class Product extends Model
      */
     public function toSearchableArray()
     {
-        $categoryKeys = [
-            'merchant_category',
-            'merchant_category_1',
-            'merchant_category_2',
-            'merchant_category_3',
-        ];
-
-        $categoryAttributes = $this->relationLoaded('attributes')
-            ? $this->getRelation('attributes')->whereIn('key', $categoryKeys)->pluck('description', 'key')
-            : $this->attributes()->whereIn('key', $categoryKeys)->pluck('description', 'key');
-
         return [
             'id' => (int) $this->id,
             'name' => $this->name,
@@ -323,19 +316,10 @@ class Product extends Model
             'store_id' => (int) $this->store_id,
             'is_parent' => (int) $this->is_parent,
             'is_store_visible' => (bool) $this->is_store_visible,
-            'merchant_category' => $categoryAttributes->get('merchant_category'),
-            'merchant_category_1' => $categoryAttributes->get('merchant_category_1'),
-            'merchant_category_2' => $categoryAttributes->get('merchant_category_2'),
-            'merchant_category_3' => $categoryAttributes->get('merchant_category_3'),
+            'merchant_category' => $this->merchant_category,
+            'merchant_category_1' => $this->merchant_category_1,
+            'merchant_category_2' => $this->merchant_category_2,
+            'merchant_category_3' => $this->merchant_category_3,
         ];
-    }
-
-    /**
-     * Modify the query used to retrieve models for bulk indexing.
-     * Eager loads attributes to avoid N+1 queries during re-indexing.
-     */
-    public function makeAllSearchableUsing(\Illuminate\Database\Eloquent\Builder $query): \Illuminate\Database\Eloquent\Builder
-    {
-        return $query->with('attributes');
     }
 }

@@ -16,6 +16,10 @@ class ProductDto
         public ?string $deepLink = null,
         public ?string $externalLink = null,
         public ?string $merchantProductId = null,
+        public ?string $merchantCategory = null,
+        public ?string $merchantCategory1 = null,
+        public ?string $merchantCategory2 = null,
+        public ?string $merchantCategory3 = null,
     ) { }
 
     /**
@@ -30,6 +34,20 @@ class ProductDto
     {
         $priceData = $product['price'] ?? [];
 
+        $rawCategory = isset($product['merchant_category']) ? trim((string) $product['merchant_category']) : null;
+
+        if ($rawCategory !== null && $rawCategory !== '') {
+            $parts = array_map('trim', explode('>', $rawCategory));
+            $merchantCategory1 = $parts[0] ?? null;
+            $merchantCategory2 = $parts[1] ?? null;
+            $merchantCategory3 = $parts[2] ?? null;
+        } else {
+            $rawCategory = null;
+            $merchantCategory1 = null;
+            $merchantCategory2 = null;
+            $merchantCategory3 = null;
+        }
+
         return new static(
             storeId: $storeId,
             name: $product['product_name'],
@@ -42,6 +60,10 @@ class ProductDto
             deepLink: $product['aw_deep_link'] ?? null,
             externalLink: $product['merchant_deep_link'] ?? null,
             merchantProductId: $product['merchant_product_id'] ?? null,
+            merchantCategory: $rawCategory,
+            merchantCategory1: $merchantCategory1,
+            merchantCategory2: $merchantCategory2,
+            merchantCategory3: $merchantCategory3,
         );
     }
 
@@ -74,6 +96,10 @@ class ProductDto
             'deep_link' => $this->deepLink,
             'external_link' => $this->externalLink,
             'merchant_product_id' => $this->merchantProductId,
+            'merchant_category' => $this->merchantCategory,
+            'merchant_category_1' => $this->merchantCategory1,
+            'merchant_category_2' => $this->merchantCategory2,
+            'merchant_category_3' => $this->merchantCategory3,
         ];
     }
 }
