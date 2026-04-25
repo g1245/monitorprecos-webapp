@@ -2,14 +2,19 @@
 
 namespace App\Http\Middleware;
 
+use App\Jobs\TrackBrowsingHistoryJob;
+use App\Services\BotDetectionService;
 use Closure;
 use Illuminate\Http\Request;
-use Symfony\Component\HttpFoundation\Response;
-use App\Jobs\TrackBrowsingHistoryJob;
 use Illuminate\Support\Facades\Auth;
+use Symfony\Component\HttpFoundation\Response;
 
 class TrackBrowsingHistory
 {
+    public function __construct(
+        protected BotDetectionService $botDetector
+    ) {}
+
     /**
      * Handle an incoming request.
      *
@@ -32,7 +37,12 @@ class TrackBrowsingHistory
      */
     protected function trackVisit(Request $request): void
     {
+        if ($this->botDetector->isBot($request->userAgent())) {
+            return;
+        }
+
         $route = $request->route();
+        
         if (!$route) {
             return;
         }

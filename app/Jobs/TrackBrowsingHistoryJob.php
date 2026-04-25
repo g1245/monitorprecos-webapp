@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use App\Models\UserBrowsingHistory;
+use App\Services\BotDetectionService;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 
@@ -32,11 +33,9 @@ class TrackBrowsingHistoryJob implements ShouldQueue
     /**
      * Execute the job.
      */
-    public function handle(): void
+    public function handle(BotDetectionService $botDetector): void
     {
-        $userAgent = $this->data['user_agent'] ?? '';
-
-        if (str_contains(strtolower($userAgent), 'bot')) {
+        if ($botDetector->isBot($this->data['user_agent'] ?? null)) {
             return;
         }
 
