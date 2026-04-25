@@ -7,7 +7,7 @@
     <title>{{ $product->name }}</title>
     @vite('resources/css/app.css')
     <style>
-        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        /* *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; } */
 
         html, body {
             width: 800px;
@@ -354,19 +354,7 @@
 
                     <h1 class="product-name">{{ $product->name }}</h1>
 
-                    @if($product->old_price && $product->old_price > $product->price)
-                        @php $discountPct = round((1 - $product->price / $product->old_price) * 100); @endphp
-                        <div class="price-from-row">
-                            <span class="price-from-label">de</span>
-                            <span class="price-old">R$&nbsp;{{ number_format($product->old_price, 2, ',', '.') }}</span>
-                            <span class="discount-badge">{{ $discountPct }}% OFF</span>
-                        </div>
-                    @endif
-
-                    <div class="price-row">
-                        <span class="price-by-label">por</span>
-                        <span class="price-current">R$&nbsp;{{ number_format($product->price, 2, ',', '.') }}</span>
-                    </div>
+                    <x-product-price :product="$product" size="lg" />
                 </div>
 
             </div>{{-- end hero-area --}}
