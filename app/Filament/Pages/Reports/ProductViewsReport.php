@@ -19,7 +19,7 @@ class ProductViewsReport extends Page implements HasTable
 {
     use InteractsWithTable;
 
-    protected static string $view = 'filament.pages.reports.product-views-report';
+    protected string $view = 'filament.pages.reports.product-views-report';
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedChartBar;
 
