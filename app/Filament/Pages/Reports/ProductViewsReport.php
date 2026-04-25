@@ -27,7 +27,7 @@ class ProductViewsReport extends Page implements HasTable
 
     protected static ?string $title = 'Relatório de Views de Produtos';
 
-    protected static ?string $navigationGroup = 'Relatórios';
+    protected static string|\UnitEnum|null $navigationGroup = 'Relatórios';
 
     protected static ?int $navigationSort = 10;
 
