@@ -118,7 +118,7 @@ class ProductViewsReport extends Page implements HasTable
                         return $indicators;
                     }),
             ])
-            ->defaultSort('visit_date', 'desc');
+            ->defaultSort('views_count', 'desc');
     }
 
     protected function getTableQuery(): Builder
