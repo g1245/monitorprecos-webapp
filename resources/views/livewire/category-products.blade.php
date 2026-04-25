@@ -32,7 +32,7 @@
         <div id="filters" class="mb-6 bg-white p-4 rounded-lg shadow-sm">
             <div class="flex justify-between items-center mb-4">
                 <h3 class="text-lg font-semibold text-gray-800">Filtros</h3>
-                @if($minPrice || $maxPrice || $brand || $storeId || $recentDiscountOnly)
+                @if($minPrice || $maxPrice || $brand || $storeId || $recentDiscountOnly || $keyword)
                     <button wire:click="clearFilters" class="text-sm text-primary hover:underline">
                         Limpar filtros
                     </button>
@@ -65,6 +65,13 @@
                     <input type="number" wire:model="storeId" placeholder="ID da loja" 
                            class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary">
                     <p class="text-xs text-gray-500 mt-1">Informe o ID da loja para filtrar</p>
+                </div>
+
+                <!-- Filtro por palavra-chave -->
+                <div class="md:col-span-2 lg:col-span-3">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Palavra-chave</label>
+                    <input type="text" wire:model="keyword" placeholder="Buscar por nome, descrição ou SKU"
+                           class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary">
                 </div>
 
                 <div class="md:col-span-2 lg:col-span-3">

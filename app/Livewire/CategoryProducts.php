@@ -19,6 +19,7 @@ class CategoryProducts extends Component
     public ?string $brand = null;
     public ?int $storeId = null;
     public bool $recentDiscountOnly = false;
+    public ?string $keyword = null;
 
     protected $queryString = [
         'sortField'          => ['except' => 'discount_percentage'],
@@ -29,6 +30,7 @@ class CategoryProducts extends Component
         'brand'              => ['except' => null],
         'storeId'            => ['except' => null],
         'recentDiscountOnly' => ['except' => false],
+        'keyword'            => ['except' => null],
     ];
 
     public function mount(string $category): void
@@ -88,6 +90,11 @@ class CategoryProducts extends Component
         $this->page = 1;
     }
 
+    public function updatingKeyword(): void
+    {
+        $this->page = 1;
+    }
+
     public function applyFilters(): void
     {
         $this->page = 1;
@@ -100,6 +107,7 @@ class CategoryProducts extends Component
         $this->brand = null;
         $this->storeId = null;
         $this->recentDiscountOnly = false;
+        $this->keyword = null;
         $this->page = 1;
     }
 
@@ -115,6 +123,10 @@ class CategoryProducts extends Component
             ->when($this->brand !== null && $this->brand !== '', fn ($q) => $q->where('brand', 'LIKE', "%{$this->brand}%"))
             ->when($this->storeId !== null, fn ($q) => $q->where('store_id', $this->storeId))
             ->when($this->recentDiscountOnly, fn ($q) => $q->withRecentPriceChange())
+            ->when($this->keyword !== null && $this->keyword !== '', function ($q) {
+                $ids = Product::search($this->keyword)->keys();
+                $q->whereIn('products.id', $ids);
+            })
             ->when(
                 $this->sortField === 'discount_percentage',
                 fn ($q) => $q->orderByRaw('(discount_percentage) ' . ($this->sortDirection === 'asc' ? 'asc' : 'desc')),
