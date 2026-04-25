@@ -142,7 +142,6 @@ class ProductViewsReport extends Page implements HasTable
             ->join('products', 'products.id', '=', 'user_browsing_history.product_id')
             ->whereNotNull('user_browsing_history.product_id')
             ->whereIn('user_browsing_history.page_type', ['product', 'redirect'])
-            ->groupBy(DB::raw('DATE(user_browsing_history.visited_at)'), 'user_browsing_history.product_id', 'products.name')
-            ->orderBy('views_count', 'desc');
+            ->groupBy(DB::raw('DATE(user_browsing_history.visited_at)'), 'user_browsing_history.product_id', 'products.name');
     }
 }
