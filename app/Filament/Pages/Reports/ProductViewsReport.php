@@ -63,6 +63,14 @@ class ProductViewsReport extends Page implements HasTable
                     })
                     ->badge()
                     ->color('primary'),
+
+                TextColumn::make('redirects_count')
+                    ->label('Total de Redirects')
+                    ->sortable(query: function (Builder $query, string $direction): Builder {
+                        return $query->orderBy('redirects_count', $direction);
+                    })
+                    ->badge()
+                    ->color('success'),
             ])
             ->filters([
                 Filter::make('product_name')
@@ -124,11 +132,17 @@ class ProductViewsReport extends Page implements HasTable
     protected function getTableQuery(): Builder
     {
         return UserBrowsingHistory::query()
-            ->selectRaw('DATE(user_browsing_history.visited_at) as visit_date, user_browsing_history.product_id, products.name as product_name, COUNT(*) as views_count')
+            ->selectRaw('
+                DATE(user_browsing_history.visited_at) as visit_date,
+                user_browsing_history.product_id,
+                products.name as product_name,
+                SUM(CASE WHEN user_browsing_history.page_type = ? THEN 1 ELSE 0 END) as views_count,
+                SUM(CASE WHEN user_browsing_history.page_type = ? THEN 1 ELSE 0 END) as redirects_count
+            ', ['product', 'redirect'])
             ->join('products', 'products.id', '=', 'user_browsing_history.product_id')
             ->whereNotNull('user_browsing_history.product_id')
-            ->where('user_browsing_history.page_type', 'product')
+            ->whereIn('user_browsing_history.page_type', ['product', 'redirect'])
             ->groupBy(DB::raw('DATE(user_browsing_history.visited_at)'), 'user_browsing_history.product_id', 'products.name')
-            ->orderBy('visit_date', 'desc');
+            ->orderBy('views_count', 'desc');
     }
 }

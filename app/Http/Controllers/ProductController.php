@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\TrackBrowsingHistoryJob;
 use App\Models\Product;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
@@ -65,11 +66,18 @@ class ProductController extends Controller
      * Redirect to product deep link (external store).
      * This route is used to track clicks before redirecting to the store.
      */
-    public function redirectToStore(int $id)
+    public function redirectToStore(int $id, Request $request)
     {
         $product = Product::with('store')->findOrFail($id);
 
-        // TODO: Add tracking logic here (e.g., log click event, update analytics)
+        TrackBrowsingHistoryJob::dispatch([
+            'product_id' => $product->id,
+            'page_type'  => 'redirect',
+            'page_url'   => $request->fullUrl(),
+            'ip_address' => $request->ip(),
+            'user_agent' => $request->userAgent(),
+            'visited_at' => now(),
+        ]);
 
         $utmParams = http_build_query([
             'utm_source'   => 'monitorprecos',
