@@ -34,6 +34,12 @@ class TrackBrowsingHistoryJob implements ShouldQueue
      */
     public function handle(): void
     {
+        $userAgent = $this->data['user_agent'] ?? '';
+
+        if (str_contains(strtolower($userAgent), 'bot')) {
+            return;
+        }
+
         UserBrowsingHistory::create($this->data);
     }
 }
