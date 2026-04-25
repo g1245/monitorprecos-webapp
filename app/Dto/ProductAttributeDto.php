@@ -35,6 +35,10 @@ class ProductAttributeDto
         public ?string $productGTIN = null,
         public ?string $installment = null,
         public ?string $merchantProductId = null,
+        public ?string $merchantCategory = null,
+        public ?string $merchantCategory1 = null,
+        public ?string $merchantCategory2 = null,
+        public ?string $merchantCategory3 = null,
     ) { }
 
     /**
@@ -69,6 +73,10 @@ class ProductAttributeDto
             'productGTIN' => 'product_GTIN',
             'installment' => 'installment',
             'merchantProductId' => 'merchant_product_id',
+            'merchantCategory' => 'merchant_category',
+            'merchantCategory1' => 'merchant_category_1',
+            'merchantCategory2' => 'merchant_category_2',
+            'merchantCategory3' => 'merchant_category_3',
         ];
 
         foreach ($mapping as $property => $key) {
@@ -90,6 +98,20 @@ class ProductAttributeDto
      */
     public static function fromApiData(int $productId, array $data): self
     {
+        $rawCategory = isset($data['merchant_category']) ? trim((string) $data['merchant_category']) : null;
+
+        if ($rawCategory !== null && $rawCategory !== '') {
+            $parts = array_map('trim', explode('>', $rawCategory));
+            $merchantCategory1 = $parts[0] ?? null;
+            $merchantCategory2 = $parts[1] ?? null;
+            $merchantCategory3 = $parts[2] ?? null;
+        } else {
+            $rawCategory = null;
+            $merchantCategory1 = null;
+            $merchantCategory2 = null;
+            $merchantCategory3 = null;
+        }
+
         return new self(
             productId: $productId,
             inStock: $data['in_stock'] ?? null,
@@ -114,6 +136,10 @@ class ProductAttributeDto
             productGTIN: $data['product_GTIN'] ?? null,
             installment: $data['installment'] ?? null,
             merchantProductId: $data['merchant_product_id'] ?? null,
+            merchantCategory: $rawCategory,
+            merchantCategory1: $merchantCategory1,
+            merchantCategory2: $merchantCategory2,
+            merchantCategory3: $merchantCategory3,
         );
     }
 }
