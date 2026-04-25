@@ -13,6 +13,7 @@ use Filament\Tables\Filters\Filter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
+use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\TextInput;
 
 class ProductViewsReport extends Page implements HasTable
@@ -30,6 +31,11 @@ class ProductViewsReport extends Page implements HasTable
     protected static string|\UnitEnum|null $navigationGroup = 'Relatórios';
 
     protected static ?int $navigationSort = 10;
+
+    public function getTableRecordKey(\Illuminate\Database\Eloquent\Model|array $record): string
+    {
+        return $record->visit_date . '_' . $record->product_id;
+    }
 
     public function table(Table $table): Table
     {
@@ -76,6 +82,40 @@ class ProductViewsReport extends Page implements HasTable
                         return filled($data['product_name'])
                             ? 'Produto: ' . $data['product_name']
                             : null;
+                    }),
+
+                Filter::make('date_range')
+                    ->label('Período')
+                    ->form([
+                        DatePicker::make('date_from')
+                            ->label('De')
+                            ->displayFormat('d/m/Y')
+                            ->native(false),
+                        DatePicker::make('date_until')
+                            ->label('Até')
+                            ->displayFormat('d/m/Y')
+                            ->native(false),
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        return $query
+                            ->when(
+                                filled($data['date_from']),
+                                fn (Builder $q) => $q->where(DB::raw('DATE(user_browsing_history.visited_at)'), '>=', $data['date_from'])
+                            )
+                            ->when(
+                                filled($data['date_until']),
+                                fn (Builder $q) => $q->where(DB::raw('DATE(user_browsing_history.visited_at)'), '<=', $data['date_until'])
+                            );
+                    })
+                    ->indicateUsing(function (array $data): array {
+                        $indicators = [];
+                        if (filled($data['date_from'])) {
+                            $indicators[] = 'De: ' . \Carbon\Carbon::parse($data['date_from'])->format('d/m/Y');
+                        }
+                        if (filled($data['date_until'])) {
+                            $indicators[] = 'Até: ' . \Carbon\Carbon::parse($data['date_until'])->format('d/m/Y');
+                        }
+                        return $indicators;
                     }),
             ])
             ->defaultSort('visit_date', 'desc');
