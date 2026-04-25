@@ -99,22 +99,21 @@
                             x-text="product.name"
                         ></p>
                         <div class="flex flex-col gap-0.5 pt-1">
-                            <div class="flex items-center gap-1.5 flex-wrap">
+                            <span
+                                x-show="product.old_price && product.old_price > product.price"
+                                x-text="'de R$ ' + Number(product.old_price).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })"
+                                class="text-xs text-gray-500 line-through"
+                            ></span>
+                            <span
+                                class="text-xl font-bold text-primary"
+                                x-text="'R$ ' + Number(product.price).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })"
+                            ></span>
+                            <div x-show="product.old_price && product.old_price > product.price" class="mt-1">
                                 <span
-                                    class="text-base font-bold text-gray-900"
-                                    x-text="'R$ ' + Number(product.price).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })"
-                                ></span>
-                                <span
-                                    x-show="product.discount_percentage > 0"
-                                    x-text="'-' + product.discount_percentage + '%'"
-                                    class="text-xs font-semibold text-white bg-green-500 px-1.5 py-0.5 rounded"
+                                    class="bg-green-100 text-green-800 text-xs font-medium px-2 py-0.5 rounded"
+                                    x-text="Math.round((1 - product.price / product.old_price) * 100) + '% OFF'"
                                 ></span>
                             </div>
-                            <span
-                                x-show="product.old_price"
-                                x-text="'de R$ ' + Number(product.old_price).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })"
-                                class="text-xs text-gray-400 line-through"
-                            ></span>
                         </div>
                     </div>
                 </a>
