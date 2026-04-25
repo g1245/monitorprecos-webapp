@@ -30,6 +30,10 @@ class ProductAttribute extends Model
         'in_stock',
         'stock_quantity',
         'installment',
+        'merchant_category',
+        'merchant_category_1',
+        'merchant_category_2',
+        'merchant_category_3',
     ];
 
     /**
