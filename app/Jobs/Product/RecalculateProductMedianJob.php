@@ -97,10 +97,9 @@ class RecalculateProductMedianJob implements ShouldQueue, ShouldBeUnique
         }
 
         $median = (float) $row->median;
-        $discountPercentageMedian = round(
-            ((float) $product->price - $median) / (float) $product->price * 100,
-            2,
-        );
+        $discountPercentageMedian = $median > 0
+            ? round(($median - (float) $product->price) / $median * 100, 2)
+            : 0.0;
 
         $product->updateQuietly([
             'price_median'                => $median,
