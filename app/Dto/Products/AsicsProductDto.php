@@ -9,7 +9,6 @@ use App\Dto\ProductDto;
  *
  * Asics does not use `base_price`, `product_price_old` or `rrp_price`. Prices are mapped as:
  * - `search_price` → price (actual selling price)
- * - `priceRegular` is always null (historical price tracked via `highest_recorded_price`)
  */
 class AsicsProductDto extends ProductDto
 {
@@ -17,7 +16,6 @@ class AsicsProductDto extends ProductDto
      * {@inheritdoc}
      *
      * Overrides price mapping to use `search_price` as the selling price.
-     * `priceRegular` is always null; historical price is tracked via `highest_recorded_price`.
      */
     public static function fromApiData(int $storeId, array $product): static
     {
@@ -28,7 +26,6 @@ class AsicsProductDto extends ProductDto
             name: $product['product_name'],
             description: $product['description'] ?? null,
             price: isset($priceData['search_price']) ? (float) $priceData['search_price'] : (float) $priceData['display_price'],
-            priceRegular: null,
             sku: $product['merchant_product_id'],
             brand: $product['brand_name'] ?? null,
             imageUrl: $product['merchant_image_url'],

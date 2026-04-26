@@ -9,7 +9,6 @@ use App\Dto\ProductDto;
  *
  * Centauro price mapping:
  * - `price_min` → price (lowest selling price across variants)
- * - `priceRegular` is always null (historical price tracked via `highest_recorded_price`)
  * - `externalLink` is mapped from `custom_1` (canonical product URL)
  */
 class CentauroProductDto extends ProductDto
@@ -18,7 +17,6 @@ class CentauroProductDto extends ProductDto
      * {@inheritdoc}
      *
      * Overrides price mapping to use `price_min` as the selling price.
-     * `priceRegular` is always null; historical price is tracked via `highest_recorded_price`.
      * Variant-level fields (imageUrl, deepLink, externalLink) are not mapped.
      */
     public static function fromApiData(int $storeId, array $product): static
@@ -28,7 +26,6 @@ class CentauroProductDto extends ProductDto
             name: $product['product_name'],
             description: $product['description'] ?? null,
             price: $product['price']['price_min'] ?? null,
-            priceRegular: null,
             sku: $product['merchant_product_id'],
             brand: $product['brand_name'] ?? null,
             imageUrl: $product['merchant_image_url'],

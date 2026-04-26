@@ -26,16 +26,9 @@ class ProductsTable
                     ->searchable(),
                 TextColumn::make('price')
                     ->label('Price')
-                    ->formatStateUsing(function ($state, $record) {
-                        $price = 'R$ ' . number_format($state, 2, ',', '.');
-                        $regular = $record->price_regular;
-                        if ($regular) {
-                            $regularFormatted = 'R$ ' . number_format($regular, 2, ',', '.');
-                            return $price . '<br><small>' . $regularFormatted . '</small>';
-                        }
-                        return $price;
+                    ->formatStateUsing(function ($state) {
+                        return 'R$ ' . number_format($state, 2, ',', '.');
                     })
-                    ->html()
                     ->sortable(),
                 TextColumn::make('old_price')
                     ->label('Old Price')

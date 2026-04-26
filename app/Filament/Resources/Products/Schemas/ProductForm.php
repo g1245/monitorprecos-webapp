@@ -30,11 +30,6 @@ class ProductForm
                     ->numeric()
                     ->default(0.0)
                     ->prefix('R$'),
-                TextInput::make('price_regular')
-                    ->required()
-                    ->numeric()
-                    ->default(0.0)
-                    ->prefix('R$'),
                 TextInput::make('sku')
                     ->label('SKU')
                     ->default(null),

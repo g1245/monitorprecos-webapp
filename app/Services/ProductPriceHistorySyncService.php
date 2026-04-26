@@ -60,7 +60,6 @@ class ProductPriceHistorySyncService
 
         foreach ($priceHistory as $priceEntry) {
             try {
-                // Calculate price and price_regular from available price fields
                 $prices = self::calculatePrices($priceEntry);
 
                 if ($prices['price'] === null) {
@@ -92,7 +91,6 @@ class ProductPriceHistorySyncService
                     'product_id' => $product->id,
                     'date' => $date,
                     'price' => $prices['price'],
-                    'price_regular' => $prices['price_regular'],
                 ]);
 
             } catch (\Exception $e) {
@@ -108,13 +106,11 @@ class ProductPriceHistorySyncService
         if ($currentPrices['price'] !== null) {
             $product->update([
                 'price' => $currentPrices['price'],
-                'price_regular' => $currentPrices['price_regular'] ?? $currentPrices['price'],
             ]);
 
             Log::channel('sync-price-history')->info("Updated product current prices", [
                 'product_id' => $product->id,
                 'price' => $currentPrices['price'],
-                'price_regular' => $currentPrices['price_regular'],
             ]);
         }
 
@@ -176,13 +172,12 @@ class ProductPriceHistorySyncService
     }
 
     /**
-     * Calculate price and price_regular from API price data.
-     * 
+     * Calculate price from API price data.
+     *
      * Price = minimum value among all *_price fields
-     * PriceRegular = maximum value among all *_price fields
      *
      * @param array $priceData
-     * @return array ['price' => float|null, 'price_regular' => float|null]
+     * @return array ['price' => float|null]
      */
     private static function calculatePrices(array $priceData): array
     {
@@ -196,18 +191,14 @@ class ProductPriceHistorySyncService
         }
 
         if (empty($prices)) {
-            return ['price' => null, 'price_regular' => null];
+            return ['price' => null];
         }
 
         // Price is the minimum value
         $price = min($prices);
 
-        // Price regular is the maximum value
-        $priceRegular = max($prices);
-
         return [
             'price' => $price,
-            'price_regular' => $priceRegular,
         ];
     }
 }
