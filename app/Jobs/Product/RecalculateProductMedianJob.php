@@ -27,13 +27,6 @@ class RecalculateProductMedianJob implements ShouldQueue, ShouldBeUnique
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     /**
-     * The queue this job should be placed on.
-     *
-     * @var string
-     */
-    public string $queue = 'median';
-
-    /**
      * The number of times the job may be attempted.
      *
      * @var int
@@ -52,7 +45,9 @@ class RecalculateProductMedianJob implements ShouldQueue, ShouldBeUnique
      */
     public function __construct(
         private readonly Product $product,
-    ) {}
+    ) {
+        $this->onQueue('median');
+    }
 
     /**
      * The unique ID of the job — one job per product in the queue.
