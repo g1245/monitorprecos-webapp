@@ -41,6 +41,8 @@ class Product extends Model
         'merchant_category_1',
         'merchant_category_2',
         'merchant_category_3',
+        'price_median',
+        'discount_percentage_median',
     ];
 
     /**
@@ -61,6 +63,8 @@ class Product extends Model
         'deep_link' => 'string',
         'external_link' => 'string',
         'discount_percentage' => 'integer',
+        'price_median' => 'decimal:2',
+        'discount_percentage_median' => 'decimal:2',
     ];
 
     /**

@@ -199,7 +199,7 @@ return [
     'defaults' => [
         'supervisor-1' => [
             'connection' => 'redis',
-            'queue' => ['default', 'products', 'browsing-history'],
+            'queue' => ['default', 'products', 'browsing-history', 'median'],
             'balance' => 'auto',
             'autoScalingStrategy' => 'time',
             'maxTime' => 0,

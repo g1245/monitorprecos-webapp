@@ -2,6 +2,7 @@
 
 namespace App\Observers;
 
+use App\Jobs\Product\RecalculateProductMedianJob;
 use App\Models\Product;
 use App\Models\ProductChangeLog;
 use App\Services\ProductLifecycleService;
@@ -31,6 +32,10 @@ class ProductObserver
         $this->lifecycle->onUpdated($product);
         $this->writeAuditLog($product, 'updated');
         $this->recordChangeLog($product);
+
+        if ($product->wasChanged('price')) {
+            RecalculateProductMedianJob::dispatch($product)->delay(now()->addSeconds(30));
+        }
     }
 
     /**
