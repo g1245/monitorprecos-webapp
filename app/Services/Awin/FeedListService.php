@@ -37,13 +37,13 @@ class FeedListService
                 continue;
             }
 
-            $storeName = trim($record['Store'] ?? '');
+            $storeName = trim($record['Advertiser Name'] ?? '');
 
             if (!$syncNameToStore->has($storeName)) {
                 continue;
             }
 
-            $lastImport = $record['Last Import'] ?? null;
+            $lastImport = $record['Last Checked'] ?? null;
 
             if (empty($lastImport)) {
                 continue;
@@ -59,7 +59,7 @@ class FeedListService
                 continue;
             }
 
-            $feedId = $record['Feed ID'] ?? ($record['ID'] ?? null);
+            $feedId = $record['Feed ID'];
 
             if (empty($feedId)) {
                 continue;
