@@ -50,9 +50,9 @@ class CsvImportService
 
         $this->createTable($tableName, $validHeaders);
 
-        $rowCount = 0;
+        $rows = [];
 
-        foreach ($csv->getRecords($headers) as $index => $record) {
+        foreach ($csv->getRecords($headers) as $record) {
             $merchantProductId = trim($record['merchant_product_id'] ?? '');
 
             if (empty($merchantProductId)) {
@@ -66,13 +66,16 @@ class CsvImportService
                 $sanitized[$col] = isset($record[$originalKey]) ? (string) $record[$originalKey] : null;
             }
 
-            DB::table($tableName)->upsert($sanitized, ['merchant_product_id'], $updateColumns);
-            $rowCount++;
+            $rows[] = $sanitized;
+        }
+
+        if (!empty($rows)) {
+            DB::table($tableName)->upsert($rows, ['merchant_product_id'], $updateColumns);
         }
 
         Log::channel('awin')->info('CSV import completed', [
             'table' => $tableName,
-            'rows'  => $rowCount,
+            'rows'  => count($rows),
             'file'  => basename($safeAbsolutePath),
         ]);
 
