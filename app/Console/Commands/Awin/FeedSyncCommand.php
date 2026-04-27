@@ -39,7 +39,7 @@ class FeedSyncCommand extends Command
         ]);
 
         try {
-            $feeds = $feedListService->getQualifyingFeeds($since);
+            $feeds = $feedListService->getQualifyingFeeds($since, ignoreLastChecked: $this->option('force'));
         } catch (\Throwable $e) {
             $this->error('Failed to fetch AWIN feed list: ' . $e->getMessage());
 

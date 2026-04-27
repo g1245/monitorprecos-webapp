@@ -58,7 +58,6 @@ class ImportAwinCsvJob implements ShouldQueue
             $meta = $csvImportService->prepare(
                 $csvRelativePath,
                 $this->store->internal_name,
-                $this->feedImport->feed_id,
             );
 
             $this->feedImport->update(['table_name' => $meta['table_name']]);

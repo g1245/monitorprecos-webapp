@@ -2,7 +2,6 @@
 
 namespace App\Services\Awin;
 
-use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Schema;
@@ -36,14 +35,13 @@ class CsvImportService
      *  - headers        : renamed column headers (original order)
      *  - valid_headers  : sanitized snake_case column names (same order)
      *
-     * @param  string      $csvRelativePath   Path relative to the local storage disk.
-     * @param  string      $storeInternalName
-     * @param  int|string  $feedId
+     * @param  string  $csvRelativePath   Path relative to the local storage disk.
+     * @param  string  $storeInternalName
      * @return array{safe_csv_path: string, table_name: string, headers: array<int,string>, valid_headers: array<int,string>}
      *
      * @throws \RuntimeException
      */
-    public function prepare(string $csvRelativePath, string $storeInternalName, int|string $feedId): array
+    public function prepare(string $csvRelativePath, string $storeInternalName): array
     {
         $absolutePath = Storage::disk('local')->path($csvRelativePath);
 
@@ -57,7 +55,7 @@ class CsvImportService
 
         $headers      = $this->renameColumns($csv->getHeader());
         $validHeaders = $this->sanitizeColumnNames($headers);
-        $tableName    = $this->generateTableName($storeInternalName, $feedId);
+        $tableName    = $this->generateTableName($storeInternalName);
 
         $this->createTable($tableName, $validHeaders);
 
@@ -98,12 +96,18 @@ class CsvImportService
         $stmt    = Statement::create()->offset($offset)->limit(self::CHUNK_SIZE);
         $records = $stmt->process($csv);
 
-        $rowsRead = 0;
+        // count() on ResultSet is O(1) — more reliable than manual iteration count.
+        $rowsRead = count($records);
         $chunk    = [];
 
         foreach ($records->getRecords($headers) as $record) {
-            $rowsRead++;
-
+            Log::channel('awin')->info('Row from CSV chunk', [
+                'table' => $tableName,
+                'offset' => $offset,
+                'row' => $record,
+                'rows_read' => $rowsRead,
+            ]);
+            
             $merchantProductId = trim($record['merchant_product_id'] ?? '');
 
             if (empty($merchantProductId)) {
@@ -113,22 +117,23 @@ class CsvImportService
             $sanitized = [];
 
             foreach ($validHeaders as $index => $col) {
-                $originalKey      = $headers[$index] ?? $col;
-                $sanitized[$col]  = isset($record[$originalKey]) ? (string) $record[$originalKey] : null;
+                $originalKey     = $headers[$index] ?? $col;
+                $sanitized[$col] = isset($record[$originalKey]) ? (string) $record[$originalKey] : null;
             }
 
             $chunk[] = $sanitized;
         }
 
         if (!empty($chunk)) {
-            DB::table($tableName)->insert($chunk);
+            $updateColumns = array_values(array_diff($validHeaders, ['merchant_product_id']));
+            DB::table($tableName)->upsert($chunk, ['merchant_product_id'], $updateColumns);
         }
 
-        Log::channel('awin')->info('CSV chunk inserted', [
-            'table'     => $tableName,
-            'offset'    => $offset,
-            'rows_read' => $rowsRead,
-            'rows_inserted' => count($chunk),
+        Log::channel('awin')->info('CSV chunk upserted', [
+            'table'         => $tableName,
+            'offset'        => $offset,
+            'rows_read'     => $rowsRead,
+            'rows_upserted' => count($chunk),
         ]);
 
         return $rowsRead;
@@ -139,12 +144,11 @@ class CsvImportService
      *
      * @param  string  $csvRelativePath  Path relative to the local storage disk.
      * @param  string  $storeInternalName
-     * @param  int|string  $feedId
      * @return string  The created table name.
      *
      * @throws \RuntimeException
      */
-    public function import(string $csvRelativePath, string $storeInternalName, int|string $feedId): string
+    public function import(string $csvRelativePath, string $storeInternalName): string
     {
         $absolutePath = Storage::disk('local')->path($csvRelativePath);
 
@@ -160,12 +164,13 @@ class CsvImportService
 
         $validHeaders = $this->sanitizeColumnNames($headers);
 
-        $tableName = $this->generateTableName($storeInternalName, $feedId);
+        $tableName = $this->generateTableName($storeInternalName);
 
         $this->createTable($tableName, $validHeaders);
 
         $rowsInserted = 0;
         $chunk = [];
+        $updateColumns = array_values(array_diff($validHeaders, ['merchant_product_id']));
 
         foreach ($csv->getRecords($headers) as $record) {
             $merchantProductId = trim($record['merchant_product_id'] ?? '');
@@ -184,14 +189,14 @@ class CsvImportService
             $chunk[] = $sanitized;
 
             if (count($chunk) >= self::CHUNK_SIZE) {
-                DB::table($tableName)->insert($chunk);
+                DB::table($tableName)->upsert($chunk, ['merchant_product_id'], $updateColumns);
                 $rowsInserted += count($chunk);
                 $chunk = [];
             }
         }
 
         if (!empty($chunk)) {
-            DB::table($tableName)->insert($chunk);
+            DB::table($tableName)->upsert($chunk, ['merchant_product_id'], $updateColumns);
             $rowsInserted += count($chunk);
         }
 
@@ -262,14 +267,13 @@ class CsvImportService
     }
 
     /**
-     * Generate a unique table name for this import: import_{store}_{feedId}_{YmdHi}.
+     * Generate the stable table name for a store's import: import_{store}.
      */
-    private function generateTableName(string $storeInternalName, int|string $feedId): string
+    private function generateTableName(string $storeInternalName): string
     {
         $slug = Str::snake(preg_replace('/[^a-zA-Z0-9_]/', '_', $storeInternalName));
-        $timestamp = Carbon::now()->format('YmdHi');
 
-        return "import_{$slug}_{$feedId}_{$timestamp}";
+        return "import_{$slug}";
     }
 
     /**
@@ -280,13 +284,22 @@ class CsvImportService
      */
     private function createTable(string $tableName, array $columns): void
     {
+        if (Schema::hasTable($tableName)) {
+            return;
+        }
+
         Schema::create($tableName, function (\Illuminate\Database\Schema\Blueprint $table) use ($columns) {
             $table->id();
 
             foreach ($columns as $column) {
-                $table->text($column)->nullable();
+                if ($column === 'merchant_product_id') {
+                    $table->string($column, 255)->nullable();
+                } else {
+                    $table->text($column)->nullable();
+                }
             }
 
+            $table->unique('merchant_product_id');
             $table->timestamps();
         });
     }

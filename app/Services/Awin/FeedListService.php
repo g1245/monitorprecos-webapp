@@ -18,12 +18,13 @@ class FeedListService
      * A feed qualifies when:
      *  - Primary Region == 'BR'
      *  - Its advertiser name matches a Store's metadata->SyncStoreName
-     *  - Its Last Import date is newer than $since (last run time)
+     *  - Its Last Checked date is newer than $since (unless $ignoreLastChecked is true)
      *
-     * @param  Carbon  $since  Timestamp of the last successful sync run.
+     * @param  Carbon  $since               Timestamp of the last successful sync run.
+     * @param  bool    $ignoreLastChecked   When true, skip the Last Checked date filter (used with --force).
      * @return Collection<int, array{feed_id: string, store: Store, last_import: string}>
      */
-    public function getQualifyingFeeds(Carbon $since): Collection
+    public function getQualifyingFeeds(Carbon $since, bool $ignoreLastChecked = false): Collection
     {
         $csv = $this->fetchFeedListCsv();
         $stores = $this->getStoresWithSyncName();
@@ -55,7 +56,7 @@ class FeedListService
                 continue;
             }
 
-            if ($lastImportDate->lte($since)) {
+            if (!$ignoreLastChecked && $lastImportDate->lte($since)) {
                 continue;
             }
 
