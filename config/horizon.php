@@ -233,6 +233,30 @@ return [
             'timeout' => 600,
             'nice' => 0,
         ],
+        'supervisor-4' => [
+            'connection' => 'redis',
+            'queue' => ['awin-feeds'],
+            'balance' => 'auto',
+            'autoScalingStrategy' => 'time',
+            'maxTime' => 0,
+            'maxJobs' => 0,
+            'memory' => 128,
+            'tries' => 3,
+            'timeout' => 300,
+            'nice' => 0,
+        ],
+        'supervisor-5' => [
+            'connection' => 'redis',
+            'queue' => ['awin-csv'],
+            'balance' => 'auto',
+            'autoScalingStrategy' => 'time',
+            'maxTime' => 0,
+            'maxJobs' => 0,
+            'memory' => 256,
+            'tries' => 1,
+            'timeout' => 1800,
+            'nice' => 0,
+        ],
     ],
 
     'environments' => [
@@ -252,6 +276,16 @@ return [
                 'balanceMaxShift' => 1,
                 'balanceCooldown' => 3,
             ],
+            'supervisor-4' => [
+                'maxProcesses' => 5,
+                'balanceMaxShift' => 1,
+                'balanceCooldown' => 3,
+            ],
+            'supervisor-5' => [
+                'maxProcesses' => 5,
+                'balanceMaxShift' => 1,
+                'balanceCooldown' => 3,
+            ],
         ],
         'local' => [
             'supervisor-1' => [
@@ -262,6 +296,12 @@ return [
             ],
             'supervisor-3' => [
                 'maxProcesses' => 5,
+            ],
+            'supervisor-4' => [
+                'maxProcesses' => 2,
+            ],
+            'supervisor-5' => [
+                'maxProcesses' => 2,
             ],
         ],
     ],

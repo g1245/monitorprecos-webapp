@@ -135,6 +135,14 @@ return [
             'replace_placeholders' => true,
         ],
 
+        'awin' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/awin.log'),
+            'level' => env('LOG_LEVEL_AWIN', 'debug'),
+            'days' => 7,
+            'replace_placeholders' => true,
+        ],
+
         'sync-price-history' => [
             'driver' => 'daily',
             'path' => storage_path('logs/sync-price-history.log'),
