@@ -20,7 +20,7 @@ class FeedSyncCommand extends Command
     public function handle(FeedListService $feedListService): int
     {
         $startedAt = now();
-        $since = Cache::get(self::LAST_RUN_CACHE_KEY, Carbon::now()->subYear());
+        $since = Cache::get(self::LAST_RUN_CACHE_KEY, Carbon::today());
 
         Log::channel('awin')->info('Feed sync started', [
             'since' => $since instanceof Carbon ? $since->toIso8601String() : (string) $since,
