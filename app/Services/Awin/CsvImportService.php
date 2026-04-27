@@ -9,10 +9,11 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use League\Csv\Reader;
+use League\Csv\Statement;
 
 class CsvImportService
 {
-    private const CHUNK_SIZE = 500;
+    public const CHUNK_SIZE = 500;
 
     /**
      * Column renames to strip special characters from AWIN feed headers.
@@ -27,15 +28,123 @@ class CsvImportService
     ];
 
     /**
+     * Prepare the import: rename the CSV, read headers and create the destination table.
+     *
+     * Returns metadata consumed by subsequent chunk jobs:
+     *  - safe_csv_path  : relative path after the ok_ rename
+     *  - table_name     : generated table name
+     *  - headers        : renamed column headers (original order)
+     *  - valid_headers  : sanitized snake_case column names (same order)
+     *
+     * @param  string      $csvRelativePath   Path relative to the local storage disk.
+     * @param  string      $storeInternalName
+     * @param  int|string  $feedId
+     * @return array{safe_csv_path: string, table_name: string, headers: array<int,string>, valid_headers: array<int,string>}
+     *
+     * @throws \RuntimeException
+     */
+    public function prepare(string $csvRelativePath, string $storeInternalName, int|string $feedId): array
+    {
+        $absolutePath = Storage::disk('local')->path($csvRelativePath);
+
+        $this->renameFileForSafety($absolutePath);
+
+        $safeRelativePath  = dirname($csvRelativePath) . '/ok_' . basename($csvRelativePath);
+        $safeAbsolutePath  = Storage::disk('local')->path($safeRelativePath);
+
+        $csv = Reader::createFromPath($safeAbsolutePath, 'r');
+        $csv->setHeaderOffset(0);
+
+        $headers      = $this->renameColumns($csv->getHeader());
+        $validHeaders = $this->sanitizeColumnNames($headers);
+        $tableName    = $this->generateTableName($storeInternalName, $feedId);
+
+        $this->createTable($tableName, $validHeaders);
+
+        return [
+            'safe_csv_path' => $safeRelativePath,
+            'table_name'    => $tableName,
+            'headers'       => $headers,
+            'valid_headers' => $validHeaders,
+        ];
+    }
+
+    /**
+     * Import one chunk of rows (CHUNK_SIZE) into an existing table.
+     *
+     * Uses League\Csv Statement to seek directly to $offset without loading the
+     * full file into memory. Returns the number of raw CSV rows read; if that
+     * number is less than CHUNK_SIZE the caller knows the file is exhausted.
+     *
+     * @param  string            $safeCsvRelativePath  Already-renamed (ok_*) path.
+     * @param  string            $tableName
+     * @param  array<int,string> $headers              Renamed headers (original order).
+     * @param  array<int,string> $validHeaders         Sanitized column names (same order).
+     * @param  int               $offset               Zero-based data-row offset to start from.
+     * @return int               Number of CSV rows actually read.
+     */
+    public function importChunk(
+        string $safeCsvRelativePath,
+        string $tableName,
+        array $headers,
+        array $validHeaders,
+        int $offset,
+    ): int {
+        $absolutePath = Storage::disk('local')->path($safeCsvRelativePath);
+
+        $csv = Reader::createFromPath($absolutePath, 'r');
+        $csv->setHeaderOffset(0);
+
+        $stmt    = Statement::create()->offset($offset)->limit(self::CHUNK_SIZE);
+        $records = $stmt->process($csv);
+
+        $rowsRead = 0;
+        $chunk    = [];
+
+        foreach ($records->getRecords($headers) as $record) {
+            $rowsRead++;
+
+            $merchantProductId = trim($record['merchant_product_id'] ?? '');
+
+            if (empty($merchantProductId)) {
+                continue;
+            }
+
+            $sanitized = [];
+
+            foreach ($validHeaders as $index => $col) {
+                $originalKey      = $headers[$index] ?? $col;
+                $sanitized[$col]  = isset($record[$originalKey]) ? (string) $record[$originalKey] : null;
+            }
+
+            $chunk[] = $sanitized;
+        }
+
+        if (!empty($chunk)) {
+            DB::table($tableName)->insert($chunk);
+        }
+
+        Log::channel('awin')->info('CSV chunk inserted', [
+            'table'     => $tableName,
+            'offset'    => $offset,
+            'rows_read' => $rowsRead,
+            'rows_inserted' => count($chunk),
+        ]);
+
+        return $rowsRead;
+    }
+
+    /**
      * Import a raw CSV feed into a dynamically created table.
      *
      * @param  string  $csvRelativePath  Path relative to the local storage disk.
      * @param  string  $storeInternalName
+     * @param  int|string  $feedId
      * @return string  The created table name.
      *
      * @throws \RuntimeException
      */
-    public function import(string $csvRelativePath, string $storeInternalName): string
+    public function import(string $csvRelativePath, string $storeInternalName, int|string $feedId): string
     {
         $absolutePath = Storage::disk('local')->path($csvRelativePath);
 
@@ -51,7 +160,7 @@ class CsvImportService
 
         $validHeaders = $this->sanitizeColumnNames($headers);
 
-        $tableName = $this->generateTableName($storeInternalName);
+        $tableName = $this->generateTableName($storeInternalName, $feedId);
 
         $this->createTable($tableName, $validHeaders);
 
@@ -153,14 +262,14 @@ class CsvImportService
     }
 
     /**
-     * Generate a unique table name for this import: import_{store}_{YmdHi}.
+     * Generate a unique table name for this import: import_{store}_{feedId}_{YmdHi}.
      */
-    private function generateTableName(string $storeInternalName): string
+    private function generateTableName(string $storeInternalName, int|string $feedId): string
     {
         $slug = Str::snake(preg_replace('/[^a-zA-Z0-9_]/', '_', $storeInternalName));
         $timestamp = Carbon::now()->format('YmdHi');
 
-        return "import_{$slug}_{$timestamp}";
+        return "import_{$slug}_{$feedId}_{$timestamp}";
     }
 
     /**

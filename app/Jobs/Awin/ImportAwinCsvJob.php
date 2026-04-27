@@ -2,6 +2,7 @@
 
 namespace App\Jobs\Awin;
 
+use App\Jobs\Awin\ImportAwinCsvChunkJob;
 use App\Models\AwinFeedImport;
 use App\Models\Store;
 use App\Services\Awin\CsvImportService;
@@ -54,19 +55,28 @@ class ImportAwinCsvJob implements ShouldQueue
         try {
             $csvRelativePath = 'awin/' . $this->feedImport->filename;
 
-            $tableName = $csvImportService->import($csvRelativePath, $this->store->internal_name);
+            $meta = $csvImportService->prepare(
+                $csvRelativePath,
+                $this->store->internal_name,
+                $this->feedImport->feed_id,
+            );
 
-            $this->feedImport->update([
-                'table_name'  => $tableName,
-                'status'      => AwinFeedImport::STATUS_DONE,
-                'finished_at' => now(),
-                'error'       => null,
-            ]);
+            $this->feedImport->update(['table_name' => $meta['table_name']]);
 
-            Log::channel('awin')->info('CSV import finished', [
+            ImportAwinCsvChunkJob::dispatch(
+                $this->feedImport,
+                $this->store,
+                $meta['table_name'],
+                $meta['safe_csv_path'],
+                $meta['headers'],
+                $meta['valid_headers'],
+                offset: 0,
+            );
+
+            Log::channel('awin')->info('CSV first chunk dispatched', [
                 'feed_id'    => $this->feedImport->feed_id,
                 'store'      => $this->store->internal_name,
-                'table_name' => $tableName,
+                'table_name' => $meta['table_name'],
             ]);
         } catch (\Throwable $e) {
             $this->feedImport->update([
@@ -75,7 +85,7 @@ class ImportAwinCsvJob implements ShouldQueue
                 'error'       => $e->getMessage(),
             ]);
 
-            Log::channel('awin')->error('CSV import failed', [
+            Log::channel('awin')->error('CSV import setup failed', [
                 'feed_id'  => $this->feedImport->feed_id,
                 'store'    => $this->store->internal_name,
                 'error'    => $e->getMessage(),

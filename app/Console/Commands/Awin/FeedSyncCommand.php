@@ -13,24 +13,33 @@ class FeedSyncCommand extends Command
 {
     private const LAST_RUN_CACHE_KEY = 'awin:feeds_sync:last_run';
 
-    protected $signature = 'app:awin-feeds-sync';
+    protected $signature = 'app:awin-feeds-sync
+                            {--force : Clear last run cache and reprocess from the start of today or from --since}
+                            {--since= : Process feeds updated since this date/datetime (e.g. 2026-04-25 or 2026-04-25T10:00:00)}';
 
     protected $description = 'Fetch AWIN feed list and dispatch download jobs for updated BR feeds';
 
     public function handle(FeedListService $feedListService): int
     {
         $startedAt = now();
-        $since = Cache::get(self::LAST_RUN_CACHE_KEY, Carbon::today());
+
+        if ($this->option('since')) {
+            $since = Carbon::parse($this->option('since'));
+        } elseif ($this->option('force')) {
+            Cache::forget(self::LAST_RUN_CACHE_KEY);
+            $since = Carbon::today();
+        } else {
+            $since = Cache::get(self::LAST_RUN_CACHE_KEY, Carbon::today());
+        }
 
         Log::channel('awin')->info('Feed sync started', [
-            'since' => $since instanceof Carbon ? $since->toIso8601String() : (string) $since,
+            'since'      => $since->toIso8601String(),
+            'force'      => $this->option('force') ? 'true' : 'false',
             'started_at' => $startedAt->toIso8601String(),
         ]);
 
         try {
-            $feeds = $feedListService->getQualifyingFeeds(
-                $since instanceof Carbon ? $since : Carbon::parse($since)
-            );
+            $feeds = $feedListService->getQualifyingFeeds($since);
         } catch (\Throwable $e) {
             $this->error('Failed to fetch AWIN feed list: ' . $e->getMessage());
 
