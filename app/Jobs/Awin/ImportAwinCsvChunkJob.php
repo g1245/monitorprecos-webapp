@@ -5,6 +5,7 @@ namespace App\Jobs\Awin;
 use App\Models\AwinFeedImport;
 use App\Models\Store;
 use App\Services\Awin\CsvImportService;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -72,24 +73,21 @@ class ImportAwinCsvChunkJob implements ShouldQueue
                 $this->offset,
             );
 
-            if ($rowsRead >= CsvImportService::CHUNK_SIZE) {
-                // File not exhausted yet — chain next chunk.
-                self::dispatch(
-                    $this->feedImport,
-                    $this->store,
-                    $this->tableName,
-                    $this->safeCsvPath,
-                    $this->headers,
-                    $this->validHeaders,
-                    offset: $this->offset + CsvImportService::CHUNK_SIZE,
-                );
+            Log::channel('awin')->info('CSV chunk finished', [
+                'feed_id'   => $this->feedImport->feed_id,
+                'store'     => $this->store->internal_name,
+                'offset'    => $this->offset,
+                'rows_read' => $rowsRead,
+            ]);
 
-                Log::channel('awin')->info('CSV next chunk dispatched', [
-                    'feed_id'     => $this->feedImport->feed_id,
-                    'next_offset' => $this->offset + CsvImportService::CHUNK_SIZE,
-                ]);
-            } else {
-                // All rows processed — mark import as done.
+            // Increment chunks_done atomically and check if all are complete.
+            DB::table('awin_feed_imports')
+                ->where('id', $this->feedImport->id)
+                ->increment('chunks_done');
+
+            $this->feedImport->refresh();
+
+            if ($this->feedImport->chunks_done >= $this->feedImport->total_chunks) {
                 $this->feedImport->update([
                     'status'      => AwinFeedImport::STATUS_DONE,
                     'finished_at' => now(),
