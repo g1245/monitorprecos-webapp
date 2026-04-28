@@ -2,9 +2,6 @@
 
 use Illuminate\Support\Facades\Schedule;
 
-// Schedule command to flush welcome page cache every fifteen minutes
-Schedule::command('app:flush-welcome-cache')->everyFifteenMinutes();
-
 // Schedule command to create daily price history entries for all active products
 Schedule::command('app:create-today-price')->dailyAt('00:10');
 
