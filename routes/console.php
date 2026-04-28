@@ -9,7 +9,8 @@ Schedule::command('app:create-today-price')->dailyAt('00:10');
 Schedule::command('app:sync-product-by-store')->hourly();
 
 // Schedule command to sync top discounted products to Department every hour
-Schedule::command('app:sync-top-discounted-products-to-department')->hourly();
+Schedule::command('app:sync-top-discounted-products-to-department')
+    ->everyMinute();
 
 /** 
  * Schedule commands for backup and cleanup of old backups
