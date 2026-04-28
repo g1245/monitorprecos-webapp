@@ -72,7 +72,7 @@ class SyncProductByStoreCommand extends Command
 
             SyncProductsForStoreJob::dispatch($store, 1, null, $updatedAtFrom);
 
-            $this->info("Job dispatched for store: {$store->name}");
+            $this->info("Job dispatched for store: {$store->name} from updated_at: {$updatedAtFrom}");
         } else {
             $stores = Store::query()
                 ->whereRaw("JSON_EXTRACT(metadata, '$.SyncStoreName') IS NOT NULL")
