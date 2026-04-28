@@ -90,11 +90,6 @@ class ReindexOldPriceCommand extends Command
 
         $this->line("Total de produtos encontrados: <info>{$totalProducts}</info>");
 
-        $resetCount = (clone $productsQuery)
-            ->toBase()
-            ->update(['old_price' => null]);
-
-        $this->line("old_price zerado para <info>{$resetCount}</info> produto(s) antes da reindexação.");
         $this->line('Iniciando reindexação...');
 
         $processed = 0;
@@ -127,6 +122,13 @@ class ReindexOldPriceCommand extends Command
                             ]);
 
                         $updated++;
+                    } else {
+                        DB::table('products')
+                            ->where('id', $product->id)
+                            ->update([
+                                'old_price'    => null,
+                                'old_price_at' => null,
+                            ]);
                     }
 
                     $bar->advance();
