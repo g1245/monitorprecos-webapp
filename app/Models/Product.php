@@ -198,19 +198,17 @@ class Product extends Model
      */
     public function addPriceHistory(float $price, ?string $date = null): ProductPriceHistory
     {
-        $targetDate = $date ?? now()->toDateString();
+        $targetDate = $date ? \Carbon\Carbon::parse($date)->toDateString() : now()->toDateString();
 
-        $existing = $this->priceHistories()->whereDate('created_at', $targetDate)->first();
-
-        if ($existing) {
-            $existing->update(['price' => $price]);
-            return $existing;
-        }
-
-        return $this->priceHistories()->create([
-            'price' => $price,
+        $record = ProductPriceHistory::firstOrNew([
+            'product_id' => $this->id,
             'created_at' => $targetDate . ' 12:00:00',
         ]);
+
+        $record->price = $price;
+        $record->save();
+
+        return $record;
     }
 
     /**

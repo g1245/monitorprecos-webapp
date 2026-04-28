@@ -22,10 +22,17 @@ class ProductService
      */
     public static function createOrUpdate(ProductDto $dto): Product
     {
-        return Product::updateOrCreate(
+        $data = $dto->toArray();
+        $data['is_parent'] = 0; // Set is_parent to true for all products
+
+        $saved = Product::updateOrCreate(
             ['store_id' => $dto->storeId, 'sku' => $dto->sku],
-            $dto->toArray()
+            $data
         );
+
+        $saved->addPriceHistory($saved->price);
+
+        return $saved;
     }
 
     /**

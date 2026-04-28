@@ -8,8 +8,6 @@ use App\Models\Store;
 use App\Services\ProductAttributeService;
 use App\Services\ProductDtoResolver;
 use App\Services\ProductService;
-use App\Services\TopDiscountsSyncService;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
@@ -85,6 +83,11 @@ class ProductSyncService
                 $savedProduct = ProductService::createOrUpdate(
                     $dtoClass::fromApiData($store->id, $product)
                 );
+
+                // Sync product attributes after saving the product
+                ProductAttributeService::sync(
+                    ProductAttributeDto::fromApiData($savedProduct->id, $product)
+                );
             } catch (\Throwable $e) {
                 Log::error("Failed to create or update product", [
                     'merchant_product_id' => $product['merchant_product_id'] ?? 'N/A',
@@ -95,29 +98,6 @@ class ProductSyncService
                 ]);
 
                 continue;
-            }
-
-            // Record price history if price has changed
-            if ($savedProduct->shouldRecordPriceHistory()) {
-                $savedProduct->addPriceHistory($savedProduct->price);
-            }
-
-            // Sync product attributes after saving the product
-            ProductAttributeService::sync(
-                ProductAttributeDto::fromApiData($savedProduct->id, $product)
-            );
-
-            // Sync product departments from category path
-            $categoryPath = $product['merchant_category'] ?? $product['merchant_product_category_path'] ?? null;
-
-            if ($categoryPath) {
-                Log::info("Syncing departments for product ID: " . $savedProduct->id);
-                Log::info("Department Path: " . $categoryPath);
-
-                ProductService::syncDepartmentsFromPath(
-                    $savedProduct->id,
-                    $categoryPath
-                );
             }
 
             $productsProcessed++;
@@ -150,25 +130,7 @@ class ProductSyncService
                 'updated_at_from' => $updatedAtFrom,
                 'finished_at' => now()->format('Y-m-d H:i:s'),
             ]);
-
-            // Flush welcome page cache once after the entire sync completes,
-            // instead of flushing on every individual product save.
-            self::flushWelcomeCache();
-
-            // Re-sync top discounted products to department 154.
-            TopDiscountsSyncService::sync($store->id);
         }
-    }
-
-    /**
-     * Flush all per-tab welcome page cache entries.
-     * Called once when the full store sync is complete.
-     */
-    private static function flushWelcomeCache(): void
-    {
-        Cache::forget('welcome_products:destaques');
-        Cache::forget('welcome_products:recentes');
-        Cache::forget('welcome_products:mais-acessados');
     }
 
     /**

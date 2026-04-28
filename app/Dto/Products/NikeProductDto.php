@@ -24,7 +24,9 @@ class NikeProductDto extends ProductDto
             storeId: $storeId,
             name: $product['product_name'],
             description: $product['description'] ?? null,
-            price: $product['price']['base_price'] ?? null,
+            price: $product['price']['base_price']
+                ?? $product['price']['search_price']
+                ?? null,
             sku: $product['merchant_product_id'],
             brand: $product['brand_name'] ?? null,
             imageUrl: $product['merchant_image_url'],
@@ -41,6 +43,6 @@ class NikeProductDto extends ProductDto
      */
     public static function hasValidPrices(array $priceData): bool
     {
-        return !empty($priceData['base_price']);
+        return !empty($priceData['base_price']) || !empty($priceData['search_price']);
     }
 }
