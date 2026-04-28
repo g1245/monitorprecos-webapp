@@ -322,4 +322,21 @@ class Product extends Model
             'merchant_category_3' => $this->merchant_category_3,
         ];
     }
+
+    /**
+     * Determine if the model should be re-indexed based on changed attributes.
+     */
+    public function searchIndexShouldBeUpdated(): bool
+    {
+        $watchedAttributes = [
+            'name',
+            'discount_percentage',
+            'merchant_category',
+            'merchant_category_1',
+            'merchant_category_2',
+            'merchant_category_3',
+        ];
+
+        return $this->isDirty($watchedAttributes);
+    }
 }
