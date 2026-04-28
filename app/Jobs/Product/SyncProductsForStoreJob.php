@@ -38,7 +38,7 @@ class SyncProductsForStoreJob implements ShouldQueue
      */
     public function tags(): array
     {
-        return ['sync', "store:{$this->store->id}"];
+        return ['sync-store', "sync-store:{$this->store->id}"];
     }
 
     /**
