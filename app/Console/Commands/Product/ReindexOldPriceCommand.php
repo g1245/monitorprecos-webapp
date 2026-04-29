@@ -111,9 +111,13 @@ class ReindexOldPriceCommand extends Command
                         ->orderByDesc('id')
                         ->first(['price', 'created_at']);
 
-                    if ($historyRecord !== null) {
-                        $newOldPrice = number_format((float) $historyRecord->price, 4, '.', '');
+                    $newOldPrice = $historyRecord !== null
+                        ? number_format((float) $historyRecord->price, 4, '.', '')
+                        : null;
 
+                    $currentPrice = number_format((float) $product->price, 4, '.', '');
+
+                    if ($newOldPrice !== null && $newOldPrice !== $currentPrice) {
                         DB::table('products')
                             ->where('id', $product->id)
                             ->update([
