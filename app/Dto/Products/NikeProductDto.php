@@ -20,7 +20,9 @@ class NikeProductDto extends ProductDto
      */
     public static function fromApiData(int $storeId, array $product): static
     {
-        $rawCategory = isset($product['merchant_category']) ? trim((string) $product['merchant_category']) : null;
+        $rawCategory = isset($product['merchant_product_category_path'])
+            ? trim((string) $product['merchant_product_category_path'])
+            : (isset($product['merchant_category']) ? trim((string) $product['merchant_category']) : null);
 
         if ($rawCategory !== null && $rawCategory !== '') {
             $parts = array_map('trim', explode('>', $rawCategory));

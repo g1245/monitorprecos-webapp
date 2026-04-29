@@ -25,6 +25,17 @@ class FillMerchantCategoryFromAttributesCommand extends Command
     protected $description = 'Fill merchant_category, merchant_category_1, merchant_category_2 and merchant_category_3 from ProductAttributes for products that have empty merchant_category';
 
     /**
+     * Possible attribute keys that hold the category path value.
+     * The first key found with a non-empty value will be used.
+     *
+     * @var array<int, string>
+     */
+    private const CATEGORY_ATTRIBUTE_KEYS = [
+        'merchant_category',
+        'merchant_product_category_path',
+    ];
+
+    /**
      * Separator used to split merchant_category into numbered parts.
      */
     private const CATEGORY_SEPARATOR = '>';
@@ -79,14 +90,23 @@ class FillMerchantCategoryFromAttributesCommand extends Command
 
             $attributes = ProductAttribute::query()
                 ->whereIn('product_id', $productIds)
-                ->where('key', 'merchant_category')
+                ->whereIn('key', self::CATEGORY_ATTRIBUTE_KEYS)
                 ->get()
-                ->keyBy('product_id');
+                ->groupBy('product_id');
 
             foreach ($products as $product) {
-                $attr = $attributes->get($product->id);
+                $productAttrs = $attributes->get($product->id, collect());
 
-                if ($attr === null || empty($attr->description)) {
+                $attr = null;
+                foreach (self::CATEGORY_ATTRIBUTE_KEYS as $key) {
+                    $candidate = $productAttrs->firstWhere('key', $key);
+                    if ($candidate !== null && !empty($candidate->description)) {
+                        $attr = $candidate;
+                        break;
+                    }
+                }
+
+                if ($attr === null) {
                     $skipped++;
                     $progressBar->advance();
                     continue;
