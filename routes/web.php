@@ -15,6 +15,12 @@ use App\Http\Controllers\NewsletterLeadController;
 use App\Http\Controllers\PagesController;
 use App\Http\Controllers\ContactMessageController;
 use App\Http\Controllers\MarkdownFeedController;
+use App\Http\Controllers\AwinWebhookController;
+
+// AWIN transaction webhook — exempt from CSRF, secret-token protected
+Route::post('/webhooks/awin/transactions', [AwinWebhookController::class, 'store'])
+    ->withoutMiddleware([\Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class])
+    ->name('webhooks.awin.transactions');
 
 // AI-readable Markdown feed (token-protected, no browsing history tracking)
 Route::get('/destaques.md', [MarkdownFeedController::class, 'highlights'])->name('destaques.md');

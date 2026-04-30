@@ -48,8 +48,9 @@ return [
     ],
 
     'awin' => [
-        'url' => env('AWIN_API_URL', 'https://aw-data.monitordeprecos.com.br'),
-        'token' => env('AWIN_API_TOKEN', ''),
+        'url'            => env('AWIN_API_URL', 'https://aw-data.monitordeprecos.com.br'),
+        'token'          => env('AWIN_API_TOKEN', ''),
+        'webhook_secret' => env('AWIN_WEBHOOK_SECRET'),
     ],
 
     'markdown_feed' => [
