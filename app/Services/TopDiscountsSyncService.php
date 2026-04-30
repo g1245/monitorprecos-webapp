@@ -32,19 +32,7 @@ class TopDiscountsSyncService
             return false;
         }
 
-        // Detach products from the department (scoped to store if provided)
-        $deleteQuery = DB::table('departments_products')
-            ->where('department_id', self::DEPARTMENT_ID);
-
-        if ($storeId !== null) {
-            $deleteQuery->whereIn('product_id', function ($query) use ($storeId) {
-                $query->select('id')->from('products')->where('store_id', $storeId);
-            });
-        }
-
-        $deleteQuery->delete();
-
-        // Get top discounted products (scoped to store if provided)
+        // Get IDs of products that qualify in this cycle (scoped to store if provided)
         $query = Product::query()
             ->fromPublicStore()
             ->parentProducts()
@@ -54,22 +42,28 @@ class TopDiscountsSyncService
             $query->where('store_id', $storeId);
         }
 
-        $topDiscountedProducts = $query->get();
+        $eligibleIds = $query->pluck('id')->toArray();
 
-        if ($topDiscountedProducts->isEmpty()) {
-            Log::info('TopDiscountsSyncService: No products with price reductions found.', [
-                'store_id' => $storeId,
-            ]);
-
-            return true;
+        // Attach new eligible products without touching existing ones,
+        // keeping the department populated during the entire sync.
+        if (!empty($eligibleIds)) {
+            $department->products()->syncWithoutDetaching($eligibleIds);
         }
 
-        // Attach products to the department
-        $department->products()->attach(
-            $topDiscountedProducts->pluck('id')->toArray()
-        );
+        // Remove products that no longer qualify in this cycle (scoped to store if provided)
+        $deleteQuery = DB::table('departments_products')
+            ->where('department_id', self::DEPARTMENT_ID)
+            ->whereNotIn('product_id', $eligibleIds);
 
-        Log::info('TopDiscountsSyncService: Synced ' . $topDiscountedProducts->count() . ' products to department ' . self::DEPARTMENT_ID . '.', [
+        if ($storeId !== null) {
+            $deleteQuery->whereIn('product_id', function ($query) use ($storeId) {
+                $query->select('id')->from('products')->where('store_id', $storeId);
+            });
+        }
+
+        $deleteQuery->delete();
+
+        Log::info('TopDiscountsSyncService: Synced ' . count($eligibleIds) . ' products to department ' . self::DEPARTMENT_ID . '.', [
             'store_id' => $storeId,
         ]);
 
