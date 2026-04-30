@@ -21,14 +21,20 @@ class AwinWebhookController extends Controller
             return response()->json(['message' => 'Unauthorized'], 401);
         }
 
-        $payload = $request->all();
+        $body = $request->post();
+        $query = $request->query();
+        $headers = $request->headers->all();
 
-        if (empty($payload)) {
+        if (empty($body) && empty($query)) {
             return response()->json(['message' => 'Empty payload'], 422);
         }
 
         AwinWebhookLog::create([
-            'payload'   => $payload,
+            'payload' => [
+                'query'   => $query,
+                'body'    => $body,
+                'headers' => $headers,
+            ],
             'source_ip' => $request->ip(),
         ]);
 
