@@ -30,7 +30,7 @@ class SyncTopDiscountedProductsToDepartmentCommand extends Command
 
         $storeId = $this->option('store') ? (int) $this->option('store') : null;
 
-        $success = TopDiscountsSyncService::sync($storeId);
+        $success = TopDiscountsSyncService::sync($storeId, fn (string $message) => $this->info($message));
 
         if (!$success) {
             $this->error('Department with ID ' . TopDiscountsSyncService::DEPARTMENT_ID . ' does not exist. Please create it first.');

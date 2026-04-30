@@ -20,9 +20,10 @@ class TopDiscountsSyncService
      * keeping products from other stores intact.
      *
      * @param int|null $storeId Restrict sync to a specific store, or null for all stores.
+     * @param callable|null $output Optional callback for stdout (receives string messages).
      * @return bool Returns false if the department does not exist, true otherwise.
      */
-    public static function sync(?int $storeId = null): bool
+    public static function sync(?int $storeId = null, ?callable $output = null): bool
     {
         $department = Department::find(self::DEPARTMENT_ID);
 
@@ -50,6 +51,8 @@ class TopDiscountsSyncService
             $department->products()->syncWithoutDetaching($eligibleIds);
         }
 
+        $output && $output('Products to be attached (' . count($eligibleIds) . '): ' . implode(', ', $eligibleIds));
+
         // Remove products that no longer qualify in this cycle (scoped to store if provided)
         $deleteQuery = DB::table('departments_products')
             ->where('department_id', self::DEPARTMENT_ID)
@@ -61,7 +64,9 @@ class TopDiscountsSyncService
             });
         }
 
-        $deleteQuery->delete();
+        $removed = $deleteQuery->delete();
+
+        $output && $output('Products removed from department: ' . $removed);
 
         Log::info('TopDiscountsSyncService: Synced ' . count($eligibleIds) . ' products to department ' . self::DEPARTMENT_ID . '.', [
             'store_id' => $storeId,
