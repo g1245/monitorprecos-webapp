@@ -341,6 +341,12 @@
                                     <div class="sm:w-1/2 text-sm text-gray-900">{{ $attribute->description }}</div>
                                 </div>
                             @endforeach
+                            @if($product->old_price && $product->old_price_at)
+                                <div class="flex flex-col sm:flex-row py-3 border-b border-gray-100">
+                                    <div class="sm:w-1/2 text-sm text-gray-600 font-medium mb-1 sm:mb-0">Alteração de Preço</div>
+                                    <div class="sm:w-1/2 text-sm text-gray-900">{{ $product->old_price_at->format('d/m/Y') }}</div>
+                                </div>
+                            @endif
                         </div>
                     </div>
                     
