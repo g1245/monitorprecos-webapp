@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\View\View;
+use Illuminate\Http\Response;
 
 class PagesController extends Controller
 {
@@ -58,5 +59,23 @@ class PagesController extends Controller
         }
 
         return view($view, ['category' => $slug]);
+    }
+
+    /**
+     * Display a niche-specific WhatsApp/Telegram group landing page.
+     */
+    public function nicheGroup(string $niche): View
+    {
+        /** @var array<string, mixed>|null $group */
+        $group = config("groups.{$niche}");
+
+        if ($group === null) {
+            abort(404);
+        }
+
+        return view('pages.grupo-niche', [
+            'niche' => $niche,
+            'group' => $group,
+        ]);
     }
 }

@@ -127,3 +127,6 @@ Route::view('/grupo', 'pages.grupo')->name('pages.grupo');
 // WhatsApp group redirect (fires Lead + ViewContent pixels before redirecting)
 Route::view('/grupo/entrar', 'pages.grupo-redirect')->name('pages.grupo.redirect');
 
+// Niche-specific WhatsApp/Telegram group landing pages
+Route::get('/grupo/{niche}', [PagesController::class, 'nicheGroup'])->name('pages.grupo.niche');
+
