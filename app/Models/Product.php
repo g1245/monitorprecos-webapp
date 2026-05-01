@@ -184,7 +184,7 @@ class Product extends Model
      * Scope to get products with price changes in the given day window.
      * Uses old_price_at for precision — tracks exactly when old_price was last set.
      */
-    public function scopeWithRecentPriceChange($query, int $days = 2)
+    public function scopeWithRecentPriceChange($query, int $days = 1)
     {
         return $query->whereNotNull('old_price')
             ->whereColumn('old_price', '>', 'price')
