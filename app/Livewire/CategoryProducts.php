@@ -143,7 +143,7 @@ class CategoryProducts extends Component
             );
 
         $total = (clone $query)->count();
-        $products = $query->limit($limit + 1)->get();
+        $products = $query->with('store')->limit($limit + 1)->get();
 
         $this->hasMore = $products->count() > $limit;
         $products = $products->take($limit);

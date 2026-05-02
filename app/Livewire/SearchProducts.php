@@ -125,7 +125,7 @@ class SearchProducts extends Component
 
         $paginator = $query->paginate($limit, 'page', 1);
         $total = $paginator->total();
-        $products = $paginator->getCollection();
+        $products = $paginator->getCollection()->load('store');
 
         $this->hasMore = $paginator->hasMorePages();
 
