@@ -33,6 +33,7 @@ class FutFanaticsProductDto extends ProductDto
             deepLink: $product['aw_deep_link'] ?? null,
             externalLink: $product['merchant_deep_link'] ?? null,
             merchantProductId: $product['merchant_product_id'] ?? null,
+            inStock: (bool) ($product['in_feed'] ?? true),
         );
     }
 
