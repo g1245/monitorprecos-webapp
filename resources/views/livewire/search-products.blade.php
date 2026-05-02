@@ -40,7 +40,7 @@
             <div class="mb-6 bg-white p-4 rounded-lg shadow-sm">
                 <div class="flex justify-between items-center mb-4">
                     <h3 class="text-lg font-semibold text-gray-800">Filtros</h3>
-                    @if($minPrice || $maxPrice || $brand || $storeId || $recentDiscountOnly)
+                    @if($minPrice || $maxPrice || $brand || $storeId || $recentDiscountOnly || !$filterInStock)
                         <button wire:click="clearFilters" class="text-sm text-primary hover:underline">
                             Limpar filtros
                         </button>
@@ -82,6 +82,13 @@
                         <label class="inline-flex items-center gap-2 text-sm font-medium text-gray-700 cursor-pointer">
                             <input type="checkbox" wire:model="recentDiscountOnly" class="rounded border-gray-300 text-primary focus:ring-primary">
                             Somente com descontos recentes
+                        </label>
+                    </div>
+
+                    <div class="md:col-span-2 lg:col-span-3">
+                        <label class="inline-flex items-center gap-2 text-sm font-medium text-gray-700 cursor-pointer">
+                            <input type="checkbox" wire:model="filterInStock" class="rounded border-gray-300 text-primary focus:ring-primary">
+                            Somente produtos disponíveis
                         </label>
                     </div>
                 </div>
