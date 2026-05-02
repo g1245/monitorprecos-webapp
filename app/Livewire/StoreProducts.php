@@ -20,6 +20,7 @@ class StoreProducts extends Component
     public ?string $brand = null;
     public bool $recentDiscountOnly = false;
     public ?string $keyword = null;
+    public bool $filterInStock = true;
 
     protected $queryString = [
         'sortField'          => ['except' => 'discount_percentage'],
@@ -30,6 +31,7 @@ class StoreProducts extends Component
         'brand'              => ['except' => null],
         'recentDiscountOnly' => ['except' => false],
         'keyword'            => ['except' => null],
+        'filterInStock'      => ['except' => true],
     ];
 
     public function mount(Store $store): void
@@ -89,6 +91,11 @@ class StoreProducts extends Component
         $this->page = 1;
     }
 
+    public function updatingFilterInStock(): void
+    {
+        $this->page = 1;
+    }
+
     public function applyFilters(): void
     {
         $this->page = 1;
@@ -101,6 +108,7 @@ class StoreProducts extends Component
         $this->brand = null;
         $this->recentDiscountOnly = false;
         $this->keyword = null;
+        $this->filterInStock = true;
         $this->page = 1;
     }
 
@@ -116,6 +124,7 @@ class StoreProducts extends Component
             ->when($this->maxPrice !== null, fn ($q) => $q->where('price', '<=', $this->maxPrice))
             ->when($this->brand !== null && $this->brand !== '', fn ($q) => $q->where('brand', 'LIKE', "%{$this->brand}%"))
             ->when($this->recentDiscountOnly, fn ($q) => $q->withRecentPriceChange())
+            ->when($this->filterInStock, fn ($q) => $q->inStock())
             ->when($this->keyword !== null && $this->keyword !== '', function ($q) {
                 $ids = Product::search($this->keyword)->keys();
                 $q->whereIn('products.id', $ids);

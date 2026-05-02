@@ -44,6 +44,9 @@ class ProductsTable
                     ->expandableLimitedList(),
                 TextColumn::make('created_at')
                     ->dateTime(),
+                IconColumn::make('in_stock')
+                    ->label('Em estoque')
+                    ->boolean(),
             ])
             ->filters([
                 SelectFilter::make('store')
@@ -52,6 +55,9 @@ class ProductsTable
                 Filter::make('recent_discount')
                     ->label('Alteração de preço recente')
                     ->query(fn ($query) => $query->withRecentPriceChange(3)),
+                Filter::make('out_of_stock')
+                    ->label('Fora de estoque')
+                    ->query(fn ($query) => $query->where('in_stock', false)),
             ])
             ->recordActions([
                 Action::make('view_product')

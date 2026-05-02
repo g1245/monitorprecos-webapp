@@ -19,6 +19,7 @@ class ProductDto
         public ?string $merchantCategory1 = null,
         public ?string $merchantCategory2 = null,
         public ?string $merchantCategory3 = null,
+        public bool $inStock = true,
     ) { }
 
     /**
@@ -62,6 +63,7 @@ class ProductDto
             merchantCategory1: $merchantCategory1,
             merchantCategory2: $merchantCategory2,
             merchantCategory3: $merchantCategory3,
+            inStock: (bool) ($product['in_feed'] ?? true),
         );
     }
 
@@ -97,6 +99,7 @@ class ProductDto
             'merchant_category_1' => $this->merchantCategory1,
             'merchant_category_2' => $this->merchantCategory2,
             'merchant_category_3' => $this->merchantCategory3,
+            'in_stock' => $this->inStock,
         ];
     }
 }

@@ -43,6 +43,7 @@ class Product extends Model
         'merchant_category_3',
         'price_median',
         'discount_percentage_median',
+        'in_stock',
     ];
 
     /**
@@ -65,6 +66,7 @@ class Product extends Model
         'discount_percentage' => 'integer',
         'price_median' => 'decimal:2',
         'discount_percentage_median' => 'decimal:2',
+        'in_stock' => 'boolean',
     ];
 
     /**
@@ -126,6 +128,14 @@ class Product extends Model
         return $this->belongsToMany(Store::class)
             ->withPivot('price', 'product_url')
             ->withTimestamps();
+    }
+
+    /**
+     * Scope to get only products that are currently in stock.
+     */
+    public function scopeInStock($query)
+    {
+        return $query->where('in_stock', true);
     }
 
     /**
@@ -320,6 +330,7 @@ class Product extends Model
             'merchant_category_1' => $this->merchant_category_1,
             'merchant_category_2' => $this->merchant_category_2,
             'merchant_category_3' => $this->merchant_category_3,
+            'in_stock' => (bool) $this->in_stock,
         ];
     }
 
@@ -335,6 +346,7 @@ class Product extends Model
             'merchant_category_1',
             'merchant_category_2',
             'merchant_category_3',
+            'in_stock',
         ];
 
         return $this->isDirty($watchedAttributes);

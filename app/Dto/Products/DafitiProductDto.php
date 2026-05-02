@@ -54,6 +54,7 @@ class DafitiProductDto extends ProductDto
             merchantCategory1: $merchantCategory1,
             merchantCategory2: $merchantCategory2,
             merchantCategory3: $merchantCategory3,
+            inStock: (bool) ($product['in_feed'] ?? true),
         );
     }
 

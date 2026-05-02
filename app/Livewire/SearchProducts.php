@@ -21,6 +21,7 @@ class SearchProducts extends Component
     public ?string $brand = null;
     public ?int $storeId = null;
     public bool $recentDiscountOnly = false;
+    public bool $filterInStock = true;
 
     protected $queryString = [
         'q'                  => ['except' => '', 'as' => 'q'],
@@ -32,6 +33,7 @@ class SearchProducts extends Component
         'brand'              => ['except' => null],
         'storeId'            => ['except' => null],
         'recentDiscountOnly' => ['except' => false],
+        'filterInStock'      => ['except' => true],
     ];
 
     public function mount(string $query = ''): void
@@ -84,6 +86,11 @@ class SearchProducts extends Component
         $this->page = 1;
     }
 
+    public function updatingFilterInStock(): void
+    {
+        $this->page = 1;
+    }
+
     public function applyFilters(): void
     {
         $this->page = 1;
@@ -96,6 +103,7 @@ class SearchProducts extends Component
         $this->brand = null;
         $this->storeId = null;
         $this->recentDiscountOnly = false;
+        $this->filterInStock = true;
         $this->page = 1;
     }
 
@@ -112,6 +120,7 @@ class SearchProducts extends Component
             ->when($this->brand !== null && $this->brand !== '', fn($q) => $q->where('brand', $this->brand))
             ->when($this->storeId !== null, fn($q) => $q->where('store_id', $this->storeId))
             ->when($this->recentDiscountOnly, fn($q) => $q->query(fn($eq) => $eq->withRecentPriceChange()))
+            ->when($this->filterInStock, fn($q) => $q->where('in_stock', true))
             ->when($this->sortField, fn($q) => $q->orderBy($this->sortField, $this->sortDirection));
 
         $paginator = $query->paginate($limit, 'page', 1);

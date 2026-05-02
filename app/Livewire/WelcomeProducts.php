@@ -49,6 +49,7 @@ class WelcomeProducts extends Component
         $query = Product::query()
             ->fromPublicStore()
             ->parentProducts()
+            ->inStock()
             ->with('store');
 
         $query = match ($this->tab) {

@@ -63,6 +63,9 @@ class ProductForm
                     ->default(null),
                 Textarea::make('external_link')
                     ->default(null),
+                Toggle::make('in_stock')
+                    ->label('Em estoque')
+                    ->default(true),
             ]);
     }
 }
