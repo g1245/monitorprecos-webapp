@@ -135,7 +135,7 @@ class Product extends Model
      */
     public function scopeInStock($query)
     {
-        return $query->where('in_stock', true);
+        return $query->where('in_stock', 1);
     }
 
     /**

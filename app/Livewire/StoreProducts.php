@@ -124,7 +124,7 @@ class StoreProducts extends Component
             ->when($this->maxPrice !== null, fn ($q) => $q->where('price', '<=', $this->maxPrice))
             ->when($this->brand !== null && $this->brand !== '', fn ($q) => $q->where('brand', 'LIKE', "%{$this->brand}%"))
             ->when($this->recentDiscountOnly, fn ($q) => $q->withRecentPriceChange())
-            ->when($this->filterInStock, fn ($q) => $q->inStock())
+            ->when($this->filterInStock, fn($q) => $q->where('in_stock', 1))
             ->when($this->keyword !== null && $this->keyword !== '', function ($q) {
                 $ids = Product::search($this->keyword)->keys();
                 $q->whereIn('products.id', $ids);
