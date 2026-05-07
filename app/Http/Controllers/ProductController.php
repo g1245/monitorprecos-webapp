@@ -59,7 +59,8 @@ class ProductController extends Controller
         $productUrl = route('product.show', ['id' => $product->id, 'slug' => Str::of($product->name)->slug()]);
         $text = urlencode($product->name . ' ' . $productUrl);
 
-        return redirect("https://wa.me/?text=$text");
+        return redirect("https://wa.me/?text=$text")
+            ->header('X-Robots-Tag', 'noindex, nofollow');
     }
 
     /**
