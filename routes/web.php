@@ -16,6 +16,14 @@ use App\Http\Controllers\PagesController;
 use App\Http\Controllers\ContactMessageController;
 use App\Http\Controllers\MarkdownFeedController;
 use App\Http\Controllers\AwinWebhookController;
+use App\Http\Controllers\SitemapController;
+
+// Sitemaps
+Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap.index');
+Route::get('/sitemap-departments.xml', [SitemapController::class, 'departments'])->name('sitemap.departments');
+Route::get('/sitemap-products-{page}.xml', [SitemapController::class, 'products'])
+    ->where('page', '[1-9][0-9]*')
+    ->name('sitemap.products');
 
 // AWIN transaction webhook — exempt from CSRF, secret-token protected
 Route::post('/webhooks/awin/transactions', [AwinWebhookController::class, 'store'])
