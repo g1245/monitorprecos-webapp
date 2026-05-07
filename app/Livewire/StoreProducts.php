@@ -117,14 +117,13 @@ class StoreProducts extends Component
         $limit = $this->page * 30;
 
         $query = Product::query()
-            ->fromPublicStore()
             ->where('store_id', $this->store->id)
+            ->fromPublicStore()
             ->parentProducts()
             ->when($this->minPrice !== null, fn ($q) => $q->where('price', '>=', $this->minPrice))
             ->when($this->maxPrice !== null, fn ($q) => $q->where('price', '<=', $this->maxPrice))
             ->when($this->brand !== null && $this->brand !== '', fn ($q) => $q->where('brand', 'LIKE', "%{$this->brand}%"))
             ->when($this->recentDiscountOnly, fn ($q) => $q->withRecentPriceChange())
-            ->when($this->filterInStock, fn($q) => $q->where('in_stock', 1))
             ->when($this->keyword !== null && $this->keyword !== '', function ($q) {
                 $ids = Product::search($this->keyword)->keys();
                 $q->whereIn('products.id', $ids);

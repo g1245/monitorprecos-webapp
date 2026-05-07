@@ -140,7 +140,6 @@ class DepartmentProducts extends Component
             ->when($this->brand !== null && $this->brand !== '', fn ($q) => $q->where('brand', 'LIKE', "%{$this->brand}%"))
             ->when($this->storeId !== null, fn ($q) => $q->where('store_id', $this->storeId))
             ->when($this->recentDiscountOnly, fn ($q) => $q->withRecentPriceChange())
-            ->when($this->filterInStock, fn($q) => $q->where('in_stock', 1))
             ->when($this->keyword !== null && $this->keyword !== '', function ($q) {
                 $ids = Product::search($this->keyword)->keys();
                 $q->whereIn('products.id', $ids);

@@ -83,13 +83,6 @@
                         Somente com descontos recentes
                     </label>
                 </div>
-
-                <div class="md:col-span-2 lg:col-span-3">
-                    <label class="inline-flex items-center gap-2 text-sm font-medium text-gray-700 cursor-pointer">
-                        <input type="checkbox" wire:model="filterInStock" class="rounded border-gray-300 text-primary focus:ring-primary">
-                        Somente produtos disponíveis
-                    </label>
-                </div>
             </div>
 
             <div class="mt-4 flex justify-end">
