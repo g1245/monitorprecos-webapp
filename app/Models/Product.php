@@ -325,12 +325,12 @@ class Product extends Model
             'brand' => $this->brand,
             'store_id' => (int) $this->store_id,
             'is_parent' => (int) $this->is_parent,
-            'is_store_visible' => (bool) $this->is_store_visible,
+            'is_store_visible' => (int)  $this->is_store_visible,
             'merchant_category' => $this->merchant_category,
             'merchant_category_1' => $this->merchant_category_1,
             'merchant_category_2' => $this->merchant_category_2,
             'merchant_category_3' => $this->merchant_category_3,
-            'in_stock' => (bool) $this->in_stock,
+            'in_stock' => (int) $this->in_stock,
         ];
     }
 
